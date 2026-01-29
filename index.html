@@ -1,0 +1,2949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beyond Decks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- GSAP with ScrollTrigger + ScrollTo for scroll-driven animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    <!-- Splitting.js for text animation -->
+    <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css" />
+    <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting-cells.css" />
+    <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
+    <style>
+        :root {
+            --black: #0A0A0A;
+            --dark: #1A1A1A;
+            --white: #FAFAFA;
+            --cream: #FAF7F2;
+            --cream-dark: #F0EBE3;
+            --cream-light: #FDFCFA;
+            --sage: #4A5D4F;
+            --sage-light: #6B7D6F;
+            --olive: #5C6B52;
+            --warm-stone: #8B7355;
+            --gray-100: #F5F5F5;
+            --gray-200: #E5E5E5;
+            --gray-300: #D4D4D4;
+            --gray-400: #A3A3A3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --accent: #4F46E5;
+            --accent-warm: #DC6843;
+            --accent-purple: #7C3AED;
+
+            --font-serif: 'Instrument Serif', Georgia, serif;
+            --font-sans: 'Inter', system-ui, sans-serif;
+
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: width 0.3s var(--ease-expo),
+                        height 0.3s var(--ease-expo),
+                        border-color 0.3s ease,
+                        background 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 4px;
+            background: var(--white);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor.hovering {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.1);
+            border-color: var(--accent);
+        }
+
+        .cursor.clicking {
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            .cursor, .cursor-dot { display: none; }
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* Progress Bar */
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+            width: 0%;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+        }
+
+        /* Floating shapes */
+        .floating-shapes {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+            animation: float 30s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            top: 5%;
+            left: -15%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-warm);
+            top: 50%;
+            right: -10%;
+            animation-delay: -10s;
+        }
+
+        .shape-3 {
+            width: 350px;
+            height: 350px;
+            background: #8B5CF6;
+            bottom: 5%;
+            left: 20%;
+            animation-delay: -20s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* Chapter Wrapper - Groups of related sections */
+        .chapter {
+            position: relative;
+        }
+
+        /* Chapter connecting line */
+        .chapter::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(0,0,0,0.08) 10%,
+                rgba(0,0,0,0.08) 90%,
+                transparent 100%
+            );
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .chapter.dark::before {
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(255,255,255,0.06) 10%,
+                rgba(255,255,255,0.06) 90%,
+                transparent 100%
+            );
+        }
+
+        /* Chapter backgrounds */
+        .chapter-cream {
+            background:
+                radial-gradient(ellipse 120% 80% at 20% 20%, rgba(139, 115, 85, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse 100% 60% at 80% 80%, rgba(92, 107, 82, 0.05) 0%, transparent 50%),
+                linear-gradient(180deg, var(--cream) 0%, var(--cream-dark) 50%, var(--cream) 100%);
+        }
+
+        .chapter-sage {
+            background:
+                radial-gradient(ellipse 150% 100% at 30% 0%, rgba(74, 93, 79, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 120% 80% at 70% 100%, rgba(92, 107, 82, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, #F5F2ED 0%, #EBE7E0 50%, #F5F2ED 100%);
+        }
+
+        .chapter-dark {
+            background:
+                radial-gradient(ellipse 100% 80% at 20% 30%, rgba(79, 70, 229, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 80% 60% at 80% 70%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
+                linear-gradient(180deg, #0A0A0A 0%, #0F0F12 50%, #0A0A0A 100%);
+        }
+
+        .chapter-warm {
+            background:
+                radial-gradient(ellipse 120% 100% at 10% 50%, rgba(139, 115, 85, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 100% 80% at 90% 30%, rgba(220, 104, 67, 0.05) 0%, transparent 50%),
+                linear-gradient(180deg, var(--cream-light) 0%, var(--cream) 50%, var(--cream-dark) 100%);
+        }
+
+        /* Section Base */
+        section {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 12vw;
+            position: relative;
+            z-index: 1;
+        }
+
+        .light {
+            color: var(--black);
+            position: relative;
+        }
+
+        /* Organic texture overlay */
+        .chapter::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .chapter.dark::after {
+            opacity: 0.015;
+        }
+
+        section > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Section divider node */
+        .section-node {
+            position: absolute;
+            left: 50%;
+            bottom: -6px;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--cream);
+            border: 2px solid var(--gray-300);
+            border-radius: 50%;
+            z-index: 5;
+        }
+
+        .dark .section-node {
+            background: var(--dark);
+            border-color: var(--gray-700);
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s var(--ease-expo), transform 0.8s var(--ease-expo);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.05s; }
+        .reveal-delay-2 { transition-delay: 0.1s; }
+        .reveal-delay-3 { transition-delay: 0.15s; }
+        .reveal-delay-4 { transition-delay: 0.2s; }
+
+        /* Parallax elements */
+        .parallax {
+            will-change: transform;
+        }
+
+        /* Typography - Refined sizing */
+        .label {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+        }
+
+        .light .label {
+            color: var(--gray-500);
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 12vw, 9rem);
+            font-weight: 400;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 400;
+            line-height: 1.15;
+            letter-spacing: -0.015em;
+        }
+
+        h3 {
+            font-family: var(--font-serif);
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            font-weight: 400;
+            line-height: 1.25;
+        }
+
+        .large-text {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            line-height: 1.6;
+            max-width: 640px;
+        }
+
+        .body-text {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: var(--gray-500);
+            max-width: 560px;
+        }
+
+        .light .body-text {
+            color: var(--gray-600);
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        /* ==================== */
+        /* HERO - DRAMATIC      */
+        /* ==================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(4rem, 18vw, 14rem);
+            line-height: 0.8;
+            letter-spacing: -0.04em;
+            position: relative;
+            color: var(--white);
+        }
+
+        .hero h1 .hero-word {
+            display: block;
+        }
+
+        .hero h1 .word {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero h1 .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        /* Gradient styling for "Decks" */
+        .hero h1 .hero-word-gradient .char {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--gray-500) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Floating deck pieces in hero */
+        .hero-decks {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-deck-piece {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            opacity: 0;
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-deck-piece:nth-child(1) { top: 15%; left: 10%; transform: rotate(-12deg); }
+        .hero-deck-piece:nth-child(2) { top: 20%; right: 12%; transform: rotate(8deg); }
+        .hero-deck-piece:nth-child(3) { bottom: 25%; left: 8%; transform: rotate(15deg); }
+        .hero-deck-piece:nth-child(4) { bottom: 18%; right: 10%; transform: rotate(-10deg); }
+        .hero-deck-piece:nth-child(5) { top: 50%; left: 5%; transform: rotate(-5deg); }
+        .hero-deck-piece:nth-child(6) { top: 45%; right: 6%; transform: rotate(12deg); }
+
+        /* Scroll indicator - minimal */
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+        }
+
+        .scroll-hint span {
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gray-600);
+        }
+
+        .scroll-hint .line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gray-600), transparent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-hint .line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: var(--accent);
+            animation: scrollLine 1.5s ease-in-out infinite;
+        }
+
+        @keyframes scrollLine {
+            0% { transform: translateY(-20px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(48px); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ==================== */
+        /* THE QUESTION         */
+        /* ==================== */
+        .the-question {
+            text-align: center;
+            align-items: center;
+        }
+
+        .the-question .quote {
+            font-family: var(--font-serif);
+            font-size: clamp(1.35rem, 3vw, 2rem);
+            font-style: italic;
+            color: var(--gray-300);
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding: 0 2rem;
+            line-height: 1.5;
+        }
+
+        .the-question .quote::before,
+        .the-question .quote::after {
+            content: '"';
+            color: var(--accent);
+            font-size: 3em;
+            position: absolute;
+            opacity: 0.3;
+            font-family: var(--font-serif);
+        }
+
+        .the-question .quote::before {
+            content: '"';
+            top: -0.5em;
+            left: -0.5em;
+        }
+
+        .the-question .quote::after {
+            content: '"';
+            bottom: -0.8em;
+            right: -0.5em;
+        }
+
+        .the-question h2 {
+            max-width: 700px;
+        }
+
+        .the-question h2 em {
+            position: relative;
+        }
+
+        .the-question h2 em::after {
+            content: '';
+            position: absolute;
+            bottom: 0.05em;
+            left: 0;
+            width: 100%;
+            height: 0.08em;
+            background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 1s var(--ease-expo) 0.5s;
+        }
+
+        .the-question h2.visible em::after {
+            transform: scaleX(1);
+        }
+
+        /* ==================== */
+        /* TRANSFORMATION       */
+        /* ==================== */
+        .transformation {
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .journey-visual {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            height: 100px;
+            margin: 3.5rem 0;
+        }
+
+        .journey-path {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gray-200);
+        }
+
+        .journey-progress {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+            transition: width 1.5s var(--ease-out);
+        }
+
+        .journey-visual.visible .journey-progress {
+            width: 25%;
+        }
+
+        .journey-dots {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .journey-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gray-300);
+            border: 2px solid var(--cream);
+            transition: all 0.5s var(--ease-expo);
+            position: relative;
+        }
+
+        .journey-dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .journey-dot.passed {
+            background: var(--accent);
+        }
+
+        .journey-label {
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            color: var(--gray-600);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.5s var(--ease-out);
+        }
+
+        .journey-dot.active .journey-label,
+        .journey-dot.passed .journey-label {
+            opacity: 1;
+        }
+
+        .journey-marker {
+            position: absolute;
+            top: -32px;
+            left: 25%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            opacity: 0;
+            transition: all 0.5s var(--ease-out);
+        }
+
+        .journey-visual.visible .journey-marker {
+            opacity: 1;
+        }
+
+        /* ==================== */
+        /* MOMENTS              */
+        /* ==================== */
+        .moments {
+            align-items: center;
+            text-align: center;
+        }
+
+        .deck-visual {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            margin: 3rem auto;
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+
+        .deck-card {
+            position: absolute;
+            width: 180px;
+            height: 120px;
+            left: 50%;
+            top: 50%;
+            margin-left: -90px;
+            margin-top: -60px;
+            background: linear-gradient(145deg, var(--gray-700) 0%, var(--gray-800) 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transition: all 1.2s var(--ease-expo);
+            transform-style: preserve-3d;
+        }
+
+        .deck-card::before {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 4px;
+        }
+
+        .deck-card:nth-child(1) {
+            transform: translateZ(0px) rotate(-2deg);
+            z-index: 1;
+        }
+        .deck-card:nth-child(2) {
+            transform: translateZ(15px) rotate(1deg);
+            z-index: 2;
+        }
+        .deck-card:nth-child(3) {
+            transform: translateZ(30px) rotate(-1deg);
+            z-index: 3;
+        }
+
+        .deck-visual.visible .deck-card:nth-child(1) {
+            transform: translateX(-100px) translateZ(-20px) rotateY(15deg) rotate(-8deg);
+            opacity: 0.4;
+        }
+        .deck-visual.visible .deck-card:nth-child(2) {
+            transform: translateZ(30px) rotateX(-5deg) rotate(0deg);
+        }
+        .deck-visual.visible .deck-card:nth-child(3) {
+            transform: translateX(100px) translateZ(-20px) rotateY(-15deg) rotate(8deg);
+            opacity: 0.4;
+        }
+
+        .deck-words {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .deck-word {
+            font-family: var(--font-serif);
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            font-style: italic;
+            color: var(--gray-500);
+            opacity: 0;
+            transform: translateY(15px) scale(0.95);
+            transition: all 0.6s var(--ease-out);
+        }
+
+        .deck-word.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* ==================== */
+        /* LEAVE                */
+        /* ==================== */
+        .leave {
+            align-items: center;
+            text-align: center;
+        }
+
+        .leave h2 {
+            color: var(--gray-400);
+        }
+
+        .leave h2 strong {
+            color: var(--white);
+            position: relative;
+        }
+
+        .leave h2 strong::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--accent-warm);
+            transition: width 0.8s var(--ease-out) 0.5s;
+        }
+
+        .leave h2.visible strong::after {
+            width: 100%;
+        }
+
+        /* ==================== */
+        /* PARADOX - DRAMATIC   */
+        /* ==================== */
+        .paradox {
+            align-items: center;
+            text-align: center;
+            min-height: 80vh;
+        }
+
+        .paradox h2 {
+            max-width: 800px;
+            font-size: clamp(2rem, 5.5vw, 4rem);
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--white) 0%, var(--gray-400) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .paradox h2 .word {
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .paradox h2 .char {
+            display: inline-block;
+            transition: transform 0.1s ease;
+        }
+
+        .paradox h2:hover .char {
+            animation: paradoxFloat 2s ease-in-out infinite;
+        }
+
+        .paradox h2 .char:nth-child(odd) {
+            animation-delay: 0.1s;
+        }
+
+        @keyframes paradoxFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* ==================== */
+        /* BRIDGE               */
+        /* ==================== */
+        .bridge {
+            align-items: center;
+            text-align: center;
+        }
+
+        .bridge h3 {
+            color: var(--gray-800);
+            max-width: 700px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ==================== */
+        /* SHIFT                */
+        /* ==================== */
+        .shift {
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shift-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(79, 70, 229, 0.15) 0%, transparent 60%);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 1.5s var(--ease-expo);
+        }
+
+        .shift.active .shift-bg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .shift-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .shift h2 {
+            margin-bottom: 2rem;
+        }
+
+        .shift h2 em {
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple), var(--accent-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ==================== */
+        /* SKEPTIC              */
+        /* ==================== */
+        .skeptic {
+            align-items: center;
+            text-align: center;
+        }
+
+        .skeptic-hero {
+            margin-bottom: 1.5rem;
+        }
+
+        .skeptic-hero .objection-main {
+            font-family: var(--font-serif);
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            font-style: italic;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .skeptic-hero .response {
+            font-family: var(--font-serif);
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            color: var(--white);
+        }
+
+        .skeptic-subtext {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            color: var(--gray-400);
+            max-width: 500px;
+            margin: 0 auto 3rem;
+        }
+
+        .skeptic-grid {
+            display: grid;
+            grid-template-columns: 1fr 50px 1fr;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 880px;
+            align-items: center;
+        }
+
+        .skeptic-item {
+            text-align: left;
+            padding: 2rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            transition: all 0.4s var(--ease-expo);
+        }
+
+        .skeptic-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+
+        .skeptic-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .skeptic-divider .line {
+            width: 1px;
+            height: 50px;
+            background: linear-gradient(to bottom, transparent, var(--accent-purple), transparent);
+        }
+
+        .skeptic-divider span {
+            font-size: 0.65rem;
+            color: var(--gray-600);
+        }
+
+        .skeptic-item .year {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: var(--font-serif);
+            letter-spacing: -0.02em;
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .skeptic-item .objection {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            font-style: italic;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .skeptic-item .outcome {
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* ==================== */
+        /* PRESSURE + VALUE CURVE */
+        /* ==================== */
+        .pressure {
+            align-items: center;
+            min-height: 150vh;
+            padding-top: 12vh;
+            padding-bottom: 12vh;
+        }
+
+        .pressure-content {
+            position: sticky;
+            top: 18vh;
+        }
+
+        .value-curve {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 260px;
+            margin: 3rem auto;
+        }
+
+        .value-curve svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .curve-line {
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+        }
+
+        .curve-deck {
+            stroke: var(--gray-400);
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        .curve-building {
+            stroke: url(#curveGradient);
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        .curve-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            fill: currentColor;
+            opacity: 0;
+        }
+
+        .curve-label-deck { fill: var(--gray-600); }
+        .curve-label-building { fill: var(--accent); }
+
+        .curve-intersection {
+            fill: var(--accent-warm);
+            opacity: 0;
+            transform-origin: center;
+            transform: scale(0);
+        }
+
+        .curve-now {
+            font-size: 0.6rem;
+            font-weight: 600;
+            fill: var(--accent-warm);
+            text-anchor: middle;
+            opacity: 0;
+        }
+
+        /* Pressure Visual - Connected Layout */
+        .pressure-visual {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            gap: 0;
+            width: 100%;
+            max-width: 880px;
+            margin-top: 3rem;
+            align-items: stretch;
+        }
+
+        .pressure-side {
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: left;
+            opacity: 0;
+            transition: all 0.8s var(--ease-out);
+        }
+
+        .pressure-side.visible {
+            opacity: 1;
+        }
+
+        .pressure-side.opportunity {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0.03) 100%);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            transform: translateX(-15px);
+        }
+
+        .pressure-side.opportunity.visible {
+            transform: translateX(0);
+        }
+
+        .pressure-side.risk {
+            background: linear-gradient(135deg, rgba(220, 104, 67, 0.1) 0%, rgba(220, 104, 67, 0.03) 100%);
+            border: 1px solid rgba(220, 104, 67, 0.2);
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+            transform: translateX(15px);
+            transition-delay: 0.1s;
+        }
+
+        .pressure-side.risk.visible {
+            transform: translateX(0);
+        }
+
+        .pressure-side .pressure-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .pressure-side.opportunity .pressure-label { color: var(--accent); opacity: 0.9; }
+        .pressure-side.risk .pressure-label { color: var(--accent-warm); opacity: 0.9; }
+
+        .pressure-side h3 {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+            color: var(--gray-800);
+        }
+
+        .pressure-side p:not(.pressure-label) {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .pressure-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(180deg, rgba(79, 70, 229, 0.12) 0%, var(--cream-dark) 50%, rgba(220, 104, 67, 0.12) 100%);
+            padding: 1rem 0;
+        }
+
+        .pressure-now {
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: var(--gray-800);
+            background: var(--cream-light);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            border: 1px solid var(--gray-300);
+            z-index: 2;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s var(--ease-expo) 0.3s;
+        }
+
+        .pressure-visual.visible .pressure-now {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .pressure-arrow {
+            width: 1px;
+            height: 32px;
+            position: relative;
+            opacity: 0;
+            transition: all 0.6s var(--ease-out);
+        }
+
+        .pressure-arrow::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            border-left: 1px solid;
+            border-top: 1px solid;
+            transform-origin: center;
+        }
+
+        .pressure-arrow-up {
+            background: linear-gradient(to top, transparent, var(--accent));
+            margin-bottom: 0.5rem;
+            transform: translateY(8px);
+        }
+
+        .pressure-arrow-up::after {
+            top: 0;
+            border-color: var(--accent);
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .pressure-arrow-down {
+            background: linear-gradient(to bottom, transparent, var(--accent-warm));
+            margin-top: 0.5rem;
+            transform: translateY(-8px);
+        }
+
+        .pressure-arrow-down::after {
+            bottom: 0;
+            border-color: var(--accent-warm);
+            transform: translateX(-50%) rotate(-135deg);
+        }
+
+        .pressure-visual.visible .pressure-arrow {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pressure-visual.visible .pressure-arrow-up {
+            transition-delay: 0.5s;
+        }
+
+        .pressure-visual.visible .pressure-arrow-down {
+            transition-delay: 0.6s;
+        }
+
+        .pressure-bottom {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .pressure-bottom p {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            font-style: italic;
+            color: var(--gray-800);
+        }
+
+        .pressure-bottom p strong {
+            font-weight: 600;
+            font-style: normal;
+            background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ==================== */
+        /* PROVOCATION          */
+        /* ==================== */
+        .provocation {
+            align-items: center;
+            text-align: center;
+        }
+
+        .provocation h2 {
+            max-width: 680px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Diverging Lines Visual */
+        .diverge-visual {
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            margin: 2.5rem auto;
+            position: relative;
+        }
+
+        .diverge-visual svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .diverge-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            stroke-linecap: round;
+        }
+
+        .diverge-origin {
+            opacity: 0;
+            transform-origin: center;
+        }
+
+        .diverge-origin-label {
+            opacity: 0;
+            text-transform: uppercase;
+        }
+
+        .diverge-endpoint {
+            opacity: 0;
+            transform-origin: center;
+        }
+
+        .diverge-endpoint circle {
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+        }
+
+        @media (max-width: 768px) {
+            .diverge-visual {
+                height: 300px;
+            }
+        }
+
+        .provocation .subtext {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            max-width: 450px;
+        }
+
+        /* ==================== */
+        /* SPECTRUM             */
+        /* ==================== */
+        .spectrum {
+            align-items: center;
+        }
+
+        .spectrum h3 {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--gray-800);
+        }
+
+        .spectrum-container {
+            width: 100%;
+            max-width: 960px;
+        }
+
+        /* The gradient bar with markers */
+        .spectrum-bar {
+            position: relative;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-purple), var(--accent-warm));
+            border-radius: 2px;
+            margin-bottom: 2.5rem;
+        }
+
+        .spectrum-markers {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 calc(12.5% - 10px);
+        }
+
+        .spectrum-marker {
+            width: 20px;
+            height: 20px;
+            background: var(--cream);
+            border: 2px solid;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.5s var(--ease-expo);
+        }
+
+        .spectrum-marker:nth-child(1) { border-color: var(--accent); transition-delay: 0.3s; }
+        .spectrum-marker:nth-child(2) { border-color: var(--accent-purple); transition-delay: 0.4s; }
+        .spectrum-marker:nth-child(3) { border-color: #A855F7; transition-delay: 0.5s; }
+        .spectrum-marker:nth-child(4) { border-color: var(--accent-warm); transition-delay: 0.6s; }
+
+        .spectrum-container.visible .spectrum-marker {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Spectrum labels above bar */
+        .spectrum-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding: 0 calc(12.5% - 24px);
+        }
+
+        .spectrum-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gray-500);
+        }
+
+        .spectrum-label:first-child { color: var(--accent); }
+        .spectrum-label:last-child { color: var(--accent-warm); }
+
+        /* Spectrum items */
+        .spectrum-track {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            width: 100%;
+        }
+
+        .spectrum-item {
+            background: var(--cream-light);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 1.25rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.6s var(--ease-expo);
+        }
+
+        .spectrum-item:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+            transition: transform 0.3s var(--ease-expo), box-shadow 0.3s var(--ease-out) !important;
+        }
+
+        .spectrum-item::before {
+            content: '';
+            position: absolute;
+            top: -1.25rem;
+            left: 50%;
+            width: 1px;
+            height: 1.25rem;
+            background: var(--gray-300);
+            transform: translateX(-50%);
+        }
+
+        .spectrum-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .spectrum-item:nth-child(1)::before { background: var(--accent); }
+        .spectrum-item:nth-child(2)::before { background: var(--accent-purple); }
+        .spectrum-item:nth-child(3)::before { background: #A855F7; }
+        .spectrum-item:nth-child(4)::before { background: var(--accent-warm); }
+
+        .spectrum-item .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .spectrum-item:nth-child(1) .step-number { background: rgba(79, 70, 229, 0.1); color: var(--accent); }
+        .spectrum-item:nth-child(2) .step-number { background: rgba(124, 58, 237, 0.1); color: var(--accent-purple); }
+        .spectrum-item:nth-child(3) .step-number { background: rgba(168, 85, 247, 0.1); color: #A855F7; }
+        .spectrum-item:nth-child(4) .step-number { background: rgba(220, 104, 67, 0.1); color: var(--accent-warm); }
+
+        .spectrum-item .time {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .spectrum-item h4 {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            color: var(--gray-800);
+            margin-bottom: 0.4rem;
+            line-height: 1.3;
+        }
+
+        .spectrum-item p {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* ==================== */
+        /* PROOF                */
+        /* ==================== */
+        .proof {
+            align-items: center;
+        }
+
+        .proof h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .proof-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 960px;
+        }
+
+        .proof-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--ease-out);
+        }
+
+        .proof-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .proof-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s var(--ease-out) 0.3s;
+        }
+
+        .proof-card.visible::before {
+            transform: scaleX(1);
+        }
+
+        .proof-card:hover {
+            transform: translateY(-4px) !important;
+            border-color: rgba(255, 255, 255, 0.12);
+            transition: transform 0.3s var(--ease-expo), border-color 0.3s ease !important;
+        }
+
+        .proof-card .type {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .proof-card .transformation {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .proof-card .before-text {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: var(--gray-500);
+            text-decoration: line-through;
+            text-decoration-color: var(--accent-warm);
+        }
+
+        .proof-card .arrow {
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .proof-card .after-text {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: var(--white);
+        }
+
+        .proof-card .insight {
+            font-size: 0.8rem;
+            font-style: italic;
+            color: var(--gray-300);
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            line-height: 1.55;
+        }
+
+        /* ==================== */
+        /* PAYOFF               */
+        /* ==================== */
+        .payoff {
+            align-items: center;
+            text-align: center;
+        }
+
+        .payoff .callback {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            font-style: italic;
+            color: var(--gray-400);
+            margin-bottom: 1.5rem;
+        }
+
+        .payoff h2 {
+            max-width: 750px;
+            margin-bottom: 2.5rem;
+        }
+
+        .payoff h2 em {
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple), var(--accent-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .payoff .large-text {
+            color: var(--gray-300);
+        }
+
+        /* ==================== */
+        /* INVITATION           */
+        /* ==================== */
+        .invitation {
+            align-items: center;
+            text-align: center;
+        }
+
+        .invitation h2 {
+            margin-bottom: 3rem;
+            color: var(--gray-800);
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 3rem;
+        }
+
+        .action-card {
+            background: var(--cream-light);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: left;
+            transition: all 0.5s var(--ease-expo);
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 0;
+            background: linear-gradient(180deg, var(--accent), var(--accent-warm));
+            transition: height 0.4s var(--ease-expo);
+        }
+
+        .action-card:hover {
+            border-color: var(--gray-300);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .action-card:hover::before {
+            height: 100%;
+        }
+
+        .action-card h4 {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card p {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            line-height: 1.55;
+        }
+
+        .tools {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .tool {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            padding: 0.6rem 1.25rem;
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            border-radius: 100px;
+            transition: all 0.4s var(--ease-expo);
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .tool::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--black);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s var(--ease-expo);
+            z-index: -1;
+        }
+
+        .tool:hover {
+            color: var(--cream);
+            border-color: var(--black);
+            transform: translateY(-3px);
+        }
+
+        .tool:hover::before {
+            transform: scaleX(1);
+        }
+
+        .closing {
+            max-width: 600px;
+            padding-top: 2.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .closing p {
+            font-family: var(--font-serif);
+            font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+            color: var(--gray-800);
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        footer {
+            padding: 5rem 12vw;
+            background: var(--black);
+            text-align: center;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 1px;
+            background: var(--gray-700);
+        }
+
+        footer p {
+            font-size: 0.7rem;
+            font-style: italic;
+            color: var(--gray-500);
+            letter-spacing: 0.02em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section {
+                padding: 60px 7vw;
+            }
+
+            .chapter::before {
+                display: none;
+            }
+
+            .skeptic-hero .objection-main {
+                font-size: clamp(1.35rem, 4vw, 2rem);
+            }
+
+            .skeptic-hero .response {
+                font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+            }
+
+            .skeptic-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .skeptic-divider {
+                flex-direction: row;
+                padding: 0.75rem 0;
+            }
+
+            .skeptic-divider .line {
+                width: 50px;
+                height: 1px;
+            }
+
+            .pressure-visual,
+            .proof-grid,
+            .spectrum-track,
+            .actions {
+                grid-template-columns: 1fr;
+            }
+
+            .pressure-visual {
+                gap: 0;
+            }
+
+            .pressure-side.opportunity,
+            .pressure-side.risk {
+                border-radius: 0;
+                border: 1px solid;
+                transform: translateY(15px);
+            }
+
+            .pressure-side.opportunity {
+                border-color: rgba(79, 70, 229, 0.2);
+                border-radius: 12px 12px 0 0;
+                border-bottom: none;
+            }
+
+            .pressure-side.risk {
+                border-color: rgba(220, 104, 67, 0.2);
+                border-radius: 0 0 12px 12px;
+                border-top: none;
+            }
+
+            .pressure-side.visible {
+                transform: translateY(0);
+            }
+
+            .pressure-center {
+                flex-direction: row;
+                padding: 0.75rem;
+                background: linear-gradient(90deg, rgba(79, 70, 229, 0.12) 0%, var(--cream-dark) 50%, rgba(220, 104, 67, 0.12) 100%);
+            }
+
+            .pressure-arrow-up {
+                height: 1px;
+                width: 32px;
+                background: linear-gradient(to left, transparent, var(--accent));
+                margin-bottom: 0;
+                margin-right: 0.5rem;
+            }
+
+            .pressure-arrow-up::after {
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%) rotate(-45deg);
+            }
+
+            .pressure-arrow-down {
+                height: 1px;
+                width: 32px;
+                background: linear-gradient(to right, transparent, var(--accent-warm));
+                margin-top: 0;
+                margin-left: 0.5rem;
+            }
+
+            .pressure-arrow-down::after {
+                right: 0;
+                left: auto;
+                top: 50%;
+                transform: translateY(-50%) rotate(135deg);
+            }
+
+            .spectrum-track {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .spectrum-bar {
+                display: none;
+            }
+
+            .spectrum-labels {
+                display: none;
+            }
+
+            .spectrum-item::before {
+                display: none;
+            }
+
+            .spectrum-item {
+                border-left: 3px solid;
+            }
+
+            .spectrum-item:nth-child(1) { border-left-color: var(--accent); }
+            .spectrum-item:nth-child(2) { border-left-color: var(--accent-purple); }
+            .spectrum-item:nth-child(3) { border-left-color: #A855F7; }
+            .spectrum-item:nth-child(4) { border-left-color: var(--accent-warm); }
+
+            .spectrum-item.visible:hover {
+                transform: translateY(0);
+                box-shadow: none;
+            }
+
+            .floating-shapes {
+                display: none;
+            }
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+
+            .reveal {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            .hero h1 .char {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+
+            .floating-shapes,
+            .hero-decks {
+                display: none;
+            }
+
+            .scroll-hint .line::after {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress"></div>
+
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-dot"></div>
+
+    <!-- CHAPTER 1: THE HOOK -->
+    <div class="chapter chapter-dark dark">
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-decks">
+                <div class="hero-deck-piece"></div>
+                <div class="hero-deck-piece"></div>
+                <div class="hero-deck-piece"></div>
+                <div class="hero-deck-piece"></div>
+                <div class="hero-deck-piece"></div>
+                <div class="hero-deck-piece"></div>
+            </div>
+            <div class="hero-content">
+                <h1>
+                    <span class="hero-word" data-splitting>Beyond</span>
+                    <span class="hero-word hero-word-gradient" data-splitting>Decks</span>
+                </h1>
+            </div>
+            <div class="scroll-hint">
+                <span>Scroll</span>
+                <div class="line"></div>
+            </div>
+        </section>
+
+        <!-- THE QUESTION -->
+        <section class="the-question">
+            <p class="quote reveal">Win on relationships. Be trusted partners, not just vendors.</p>
+            <h2 class="reveal reveal-delay-1">But what does it actually mean<br>to be <em>indispensable?</em></h2>
+        </section>
+    </div>
+
+    <!-- CHAPTER 2: THE TENSION -->
+    <div class="chapter chapter-cream">
+        <!-- TRANSFORMATION -->
+        <section class="transformation light">
+            <p class="label reveal">What we sell</p>
+            <h2 class="reveal reveal-delay-1">We sell <em>transformation.</em></h2>
+
+            <div class="journey-visual" id="journey-visual">
+                <div class="journey-path"></div>
+                <div class="journey-progress"></div>
+                <div class="journey-marker">WE ARE HERE</div>
+                <div class="journey-dots">
+                    <div class="journey-dot passed"><span class="journey-label">Kickoff</span></div>
+                    <div class="journey-dot passed"><span class="journey-label">Strategy</span></div>
+                    <div class="journey-dot active"><span class="journey-label">Handoff</span></div>
+                    <div class="journey-dot"><span class="journey-label">Execute</span></div>
+                    <div class="journey-dot"><span class="journey-label">Iterate</span></div>
+                    <div class="journey-dot"><span class="journey-label">Scale</span></div>
+                </div>
+            </div>
+
+            <p class="large-text reveal reveal-delay-2" style="color: var(--gray-600); text-align: center;">A journey that unfolds over months and years.<br>A system that requires sustained force.</p>
+        </section>
+    </div>
+
+    <!-- CHAPTER 3: MOMENTS TO PARADOX -->
+    <div class="chapter chapter-dark dark">
+        <!-- MOMENTS -->
+        <section class="moments">
+            <p class="label reveal">What we deliver</p>
+            <h2 class="reveal reveal-delay-1">We package our thinking into <em>decks.</em></h2>
+
+            <div class="deck-visual" id="deck-visual">
+                <div class="deck-card"></div>
+                <div class="deck-card"></div>
+                <div class="deck-card"></div>
+            </div>
+
+            <div class="deck-words" id="deck-words">
+                <span class="deck-word">Beautiful</span>
+                <span class="deck-word">Portable</span>
+                <span class="deck-word">Persuasive</span>
+            </div>
+
+            <p class="body-text reveal reveal-delay-3" style="text-align: center; margin: 0 auto;">They travel through organizations, align stakeholders, evangelize ideas.</p>
+        </section>
+
+        <!-- LEAVE -->
+        <section class="leave">
+            <p class="label reveal">Then what?</p>
+            <h2 class="reveal reveal-delay-1">We hand off the recipe<br><strong>and leave the kitchen.</strong></h2>
+        </section>
+
+        <!-- PARADOX -->
+        <section class="paradox">
+            <h2 class="reveal">You can't be a true partner<br>to a journey you're not on.</h2>
+        </section>
+    </div>
+
+    <!-- CHAPTER 4: THE BRIDGE -->
+    <div class="chapter chapter-sage">
+        <!-- BRIDGE -->
+        <section class="bridge light">
+            <p class="label reveal">The constraint</p>
+            <h3 class="reveal reveal-delay-1">Decks were the highest-leverage format available—<br>and for good reason.</h3>
+            <p class="body-text reveal reveal-delay-2" style="text-align: center; margin: 1.5rem auto 0;">Building things that could travel with clients required developers, budgets, months. Decks were all the economics supported.</p>
+        </section>
+    </div>
+
+    <!-- CHAPTER 5: THE SHIFT -->
+    <div class="chapter chapter-dark dark">
+        <!-- SHIFT -->
+        <section class="shift" id="shift-section">
+            <div class="shift-bg"></div>
+            <div class="shift-content">
+                <p class="label reveal">The shift</p>
+                <h2 class="reveal reveal-delay-1">Building is now<br><em>nearly free.</em></h2>
+                <p class="large-text reveal reveal-delay-2" style="color: var(--gray-400); text-align: center;">The same hours spent perfecting a deck<br>can now produce a working prototype.</p>
+            </div>
+        </section>
+
+        <!-- SKEPTIC -->
+        <section class="skeptic">
+            <div class="skeptic-hero reveal">
+                <p class="objection-main">"But we're not developers."</p>
+                <h2 class="response">That's the point.</h2>
+            </div>
+            <p class="skeptic-subtext reveal reveal-delay-1">The barrier isn't skill—it's imagination.<br>We've seen this before.</p>
+
+            <div class="skeptic-grid">
+                <div class="skeptic-item">
+                    <p class="year">1985</p>
+                    <p class="objection">"We're designers, not typesetters."</p>
+                    <p class="outcome">The Mac and PageMaker arrived. The designers who moved first found leverage that compounded.</p>
+                </div>
+                <div class="skeptic-divider">
+                    <div class="line"></div>
+                    <span>vs</span>
+                    <div class="line"></div>
+                </div>
+                <div class="skeptic-item">
+                    <p class="year">2025</p>
+                    <p class="objection">"We're strategists, not developers."</p>
+                    <p class="outcome">AI is collapsing the boundary. The signs are clear we're in one of those moments now—likely a larger one.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- CHAPTER 6: THE PRESSURE -->
+    <div class="chapter chapter-cream">
+        <!-- PRESSURE + VALUE CURVE -->
+        <section class="pressure light" id="pressure-section">
+            <div class="pressure-content">
+                <p class="label reveal" style="text-align: center;">The dual pressure</p>
+
+                <div class="value-curve" id="value-curve">
+                    <svg viewBox="0 0 700 300" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#4F46E5"/>
+                                <stop offset="100%" style="stop-color:#DC6843"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Axis lines -->
+                        <line x1="50" y1="250" x2="650" y2="250" stroke="#D4D4D4" stroke-width="1"/>
+                        <line x1="50" y1="50" x2="50" y2="250" stroke="#D4D4D4" stroke-width="1"/>
+
+                        <!-- Axis labels -->
+                        <text x="350" y="285" text-anchor="middle" fill="#737373" font-size="10" font-family="Inter, system-ui, sans-serif">Time</text>
+                        <text x="20" y="150" text-anchor="middle" fill="#737373" font-size="10" font-family="Inter, system-ui, sans-serif" transform="rotate(-90 20 150)">Value</text>
+
+                        <!-- Deck value curve (flat/declining) -->
+                        <path class="curve-line curve-deck" d="M 50 180 Q 200 170 350 175 Q 500 180 650 200"/>
+
+                        <!-- Building value curve (rising) -->
+                        <path class="curve-line curve-building" d="M 50 230 Q 200 220 350 175 Q 500 100 650 60"/>
+
+                        <!-- Intersection point -->
+                        <circle class="curve-intersection" cx="350" cy="175" r="6"/>
+
+                        <!-- Labels -->
+                        <text class="curve-label curve-label-deck" x="680" y="218" text-anchor="end" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif">Decks alone</text>
+                        <text class="curve-label curve-label-building" x="680" y="78" text-anchor="end" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif">Decks + Building</text>
+
+                        <!-- Now marker -->
+                        <text class="curve-now" x="350" y="155" font-size="9" font-family="Inter, system-ui, sans-serif">NOW</text>
+                    </svg>
+                </div>
+
+                <div class="pressure-visual">
+                    <div class="pressure-side opportunity">
+                        <p class="pressure-label">If we move</p>
+                        <h3>Our thinking travels further.</h3>
+                        <p>More touchpoints. More durability. More ways to shape the transformation over time.</p>
+                    </div>
+                    <div class="pressure-center">
+                        <div class="pressure-arrow pressure-arrow-up"></div>
+                        <div class="pressure-now">NOW</div>
+                        <div class="pressure-arrow pressure-arrow-down"></div>
+                    </div>
+                    <div class="pressure-side risk">
+                        <p class="pressure-label">If we don't</p>
+                        <h3>Our value gets compressed.</h3>
+                        <p>Decks feel thinner. Clients wonder why they're not getting more. The gap becomes visible.</p>
+                    </div>
+                </div>
+
+                <div class="pressure-bottom reveal">
+                    <p><strong>The value curve is shifting.</strong><br>We should be ahead of it, not behind it.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- CHAPTER 7: THE PROVOCATION -->
+    <div class="chapter chapter-warm">
+        <!-- PROVOCATION -->
+        <section class="provocation light">
+            <p class="label reveal">The provocation</p>
+            <h2 class="reveal reveal-delay-1">What if our thinking<br>could take <em>more forms?</em></h2>
+
+            <!-- Diverging Lines Visual -->
+            <div class="diverge-visual" id="diverge-visual">
+                <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <linearGradient id="lineGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:var(--accent)"/>
+                            <stop offset="100%" style="stop-color:var(--accent-purple)"/>
+                        </linearGradient>
+                        <linearGradient id="lineGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:var(--accent)"/>
+                            <stop offset="100%" style="stop-color:#A855F7"/>
+                        </linearGradient>
+                        <linearGradient id="lineGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:var(--accent)"/>
+                            <stop offset="100%" style="stop-color:var(--accent-warm)"/>
+                        </linearGradient>
+                        <linearGradient id="lineGradient4" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:var(--accent)"/>
+                            <stop offset="100%" style="stop-color:#10B981"/>
+                        </linearGradient>
+                        <linearGradient id="lineGradient5" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:var(--accent)"/>
+                            <stop offset="100%" style="stop-color:#F59E0B"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Origin point label -->
+                    <text class="diverge-origin-label" x="400" y="25" text-anchor="middle" font-size="11" font-weight="600" fill="#525252" letter-spacing="0.1em">THINKING</text>
+
+                    <!-- Diverging paths - curves from center top to different endpoints (flowing downward) -->
+                    <path class="diverge-line" id="diverge-line-1" d="M 400 50 Q 400 130 120 340" stroke="url(#lineGradient1)" stroke-width="2" fill="none"/>
+                    <path class="diverge-line" id="diverge-line-2" d="M 400 50 Q 400 150 240 360" stroke="url(#lineGradient2)" stroke-width="2" fill="none"/>
+                    <path class="diverge-line" id="diverge-line-3" d="M 400 50 Q 400 170 400 370" stroke="url(#lineGradient3)" stroke-width="2" fill="none"/>
+                    <path class="diverge-line" id="diverge-line-4" d="M 400 50 Q 400 150 560 360" stroke="url(#lineGradient4)" stroke-width="2" fill="none"/>
+                    <path class="diverge-line" id="diverge-line-5" d="M 400 50 Q 400 130 680 340" stroke="url(#lineGradient5)" stroke-width="2" fill="none"/>
+
+                    <!-- Origin point (deck) -->
+                    <circle class="diverge-origin" cx="400" cy="50" r="8" fill="var(--accent)"/>
+
+                    <!-- Endpoint icons/labels -->
+                    <g class="diverge-endpoint" id="endpoint-1" transform="translate(120, 340)">
+                        <circle r="24" fill="var(--cream-light)" stroke="var(--accent-purple)" stroke-width="2"/>
+                        <text y="4" text-anchor="middle" font-size="16">📊</text>
+                        <text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Presentations</text>
+                    </g>
+                    <g class="diverge-endpoint" id="endpoint-2" transform="translate(240, 360)">
+                        <circle r="24" fill="var(--cream-light)" stroke="#A855F7" stroke-width="2"/>
+                        <text y="4" text-anchor="middle" font-size="16">🧮</text>
+                        <text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Calculators</text>
+                    </g>
+                    <g class="diverge-endpoint" id="endpoint-3" transform="translate(400, 370)">
+                        <circle r="24" fill="var(--cream-light)" stroke="var(--accent-warm)" stroke-width="2"/>
+                        <text y="4" text-anchor="middle" font-size="16">🔧</text>
+                        <text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Prototypes</text>
+                    </g>
+                    <g class="diverge-endpoint" id="endpoint-4" transform="translate(560, 360)">
+                        <circle r="24" fill="var(--cream-light)" stroke="#10B981" stroke-width="2"/>
+                        <text y="4" text-anchor="middle" font-size="16">📈</text>
+                        <text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Dashboards</text>
+                    </g>
+                    <g class="diverge-endpoint" id="endpoint-5" transform="translate(680, 340)">
+                        <circle r="24" fill="var(--cream-light)" stroke="#F59E0B" stroke-width="2"/>
+                        <text y="4" text-anchor="middle" font-size="16">⚙️</text>
+                        <text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Tools</text>
+                    </g>
+                </svg>
+            </div>
+
+            <p class="subtext reveal reveal-delay-2">The thinking is still the value. Now it doesn't have to stop at the deck.</p>
+        </section>
+
+        <!-- SPECTRUM -->
+        <section class="spectrum light">
+            <h3 class="reveal">The spectrum of "beyond decks"</h3>
+
+            <div class="spectrum-container" id="spectrum-container">
+                <div class="spectrum-labels">
+                    <span class="spectrum-label">Lighter</span>
+                    <span class="spectrum-label">Heavier</span>
+                </div>
+
+                <div class="spectrum-bar">
+                    <div class="spectrum-markers">
+                        <div class="spectrum-marker">1</div>
+                        <div class="spectrum-marker">2</div>
+                        <div class="spectrum-marker">3</div>
+                        <div class="spectrum-marker">4</div>
+                    </div>
+                </div>
+
+                <div class="spectrum-track" id="spectrum-track">
+                    <div class="spectrum-item">
+                        <span class="step-number">1</span>
+                        <p class="time">Hours</p>
+                        <h4>Presented differently</h4>
+                        <p>Non-linear, explorable presentations that feel more like experiences.</p>
+                    </div>
+                    <div class="spectrum-item">
+                        <span class="step-number">2</span>
+                        <p class="time">A day</p>
+                        <h4>Calculators & Scorecards</h4>
+                        <p>"Rate your brand maturity" — applied thinking they can use.</p>
+                    </div>
+                    <div class="spectrum-item">
+                        <span class="step-number">3</span>
+                        <p class="time">A few days</p>
+                        <h4>Prototypes</h4>
+                        <p>Interactive concepts that bring a vision to life.</p>
+                    </div>
+                    <div class="spectrum-item">
+                        <span class="step-number">4</span>
+                        <p class="time">A week</p>
+                        <h4>Lightweight tools</h4>
+                        <p>Things that live beyond the engagement. Durable utility.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- CHAPTER 8: THE PROOF -->
+    <div class="chapter chapter-dark dark">
+        <!-- PROOF -->
+        <section class="proof">
+            <h2 class="reveal">What this looks like.</h2>
+
+            <div class="proof-grid" id="proof-grid">
+                <div class="proof-card">
+                    <p class="type">Brand / Positioning</p>
+                    <div class="transformation">
+                        <span class="before-text">Positioning deck</span>
+                        <span class="arrow">→</span>
+                        <span class="after-text">Positioning landscape</span>
+                    </div>
+                    <p class="insight">A deck gets presented and filed. A landscape gets inhabited.</p>
+                </div>
+                <div class="proof-card">
+                    <p class="type">Customer Experience</p>
+                    <div class="transformation">
+                        <span class="before-text">Journey map PDF</span>
+                        <span class="arrow">→</span>
+                        <span class="after-text">Journey explorer</span>
+                    </div>
+                    <p class="insight">A map is a snapshot. An explorer moves with the business.</p>
+                </div>
+                <div class="proof-card">
+                    <p class="type">GTM / Launch</p>
+                    <div class="transformation">
+                        <span class="before-text">GTM playbook</span>
+                        <span class="arrow">→</span>
+                        <span class="after-text">Launch dashboard</span>
+                    </div>
+                    <p class="insight">A playbook tells you what to do. A dashboard helps you decide what to do now.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAYOFF -->
+        <section class="payoff">
+            <p class="callback reveal">"Win on relationships. Be trusted partners."</p>
+            <h2 class="reveal reveal-delay-1"><em>This</em> is what that means.</h2>
+            <p class="large-text reveal reveal-delay-2">Not schmoozing. Extending what's possible.<br>Thinking that doesn't stop when the meeting ends.</p>
+            <p class="large-text reveal reveal-delay-3" style="margin-top: 1.5rem;">Not consultants who hand off and leave.<br>Partners whose thinking stays in the room.</p>
+        </section>
+    </div>
+
+    <!-- CHAPTER 9: THE INVITATION -->
+    <div class="chapter chapter-sage">
+        <!-- INVITATION -->
+        <section class="invitation light">
+            <h2 class="reveal">Start now.</h2>
+
+            <div class="actions reveal reveal-delay-1">
+                <div class="action-card">
+                    <h4>Try the tools</h4>
+                    <p>Spend an hour with Lovable, Replit, or Claude. Build something small. See what's possible.</p>
+                </div>
+                <div class="action-card">
+                    <h4>Ask the question</h4>
+                    <p>On every engagement: "Could this be more than a deck?" The answer is usually yes.</p>
+                </div>
+            </div>
+
+            <div class="tools reveal reveal-delay-2">
+                <a href="https://lovable.dev" target="_blank" rel="noopener" class="tool">Lovable</a>
+                <a href="https://replit.com" target="_blank" rel="noopener" class="tool">Replit</a>
+                <a href="https://claude.ai" target="_blank" rel="noopener" class="tool">Claude</a>
+                <a href="https://cursor.com" target="_blank" rel="noopener" class="tool">Cursor</a>
+                <a href="https://v0.dev" target="_blank" rel="noopener" class="tool">v0</a>
+            </div>
+
+            <div class="closing reveal reveal-delay-3">
+                <p>The ones who extend what's possible<br>become impossible to replace.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>This presentation is itself an argument.</p>
+    </footer>
+
+    <script>
+        // Register GSAP plugins
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // If reduced motion is preferred, disable GSAP animations
+        if (prefersReducedMotion) {
+            gsap.globalTimeline.timeScale(100);
+            ScrollTrigger.defaults({ markers: false });
+        }
+
+        // Initialize Splitting.js
+        Splitting();
+
+        // ==========================================
+        // CUSTOM CURSOR
+        // ==========================================
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Smooth cursor following
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Cursor interactions
+        const interactiveElements = document.querySelectorAll('a, button, .tool, .action-card, .proof-card, .spectrum-item, .form-item');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+        });
+
+        document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+
+        // ==========================================
+        // PROGRESS BAR
+        // ==========================================
+        const progress = document.querySelector('.progress');
+
+        ScrollTrigger.create({
+            trigger: document.body,
+            start: "top top",
+            end: "bottom bottom",
+            onUpdate: (self) => {
+                progress.style.width = (self.progress * 100) + '%';
+            }
+        });
+
+        // ==========================================
+        // HERO - DRAMATIC ENTRANCE
+        // ==========================================
+        const heroChars = document.querySelectorAll('.hero h1 .char');
+        const heroDecks = document.querySelectorAll('.hero-deck-piece');
+        const scrollHint = document.querySelector('.scroll-hint');
+
+        // Hero title animation - staggered character reveal
+        const heroTl = gsap.timeline({ delay: 0.5 });
+
+        heroTl.fromTo(heroChars,
+            { y: '100%', opacity: 0 },
+            {
+                y: '0%',
+                opacity: 1,
+                duration: 1,
+                stagger: 0.04,
+                ease: "expo.out"
+            }
+        );
+
+        // Floating deck pieces
+        heroTl.fromTo(heroDecks,
+            { opacity: 0, scale: 0.8, rotation: () => gsap.utils.random(-30, 30) },
+            {
+                opacity: 0.6,
+                scale: 1,
+                rotation: () => gsap.utils.random(-15, 15),
+                duration: 1.2,
+                stagger: 0.1,
+                ease: "expo.out"
+            },
+            "-=0.8"
+        );
+
+        // Scroll hint - show initially, fade on scroll
+        heroTl.to(scrollHint, {
+            opacity: 1,
+            duration: 0.8
+        }, "-=0.5");
+
+        // Scroll hint fades as you scroll, returns when back at top
+        gsap.to(scrollHint, {
+            opacity: 0,
+            scrollTrigger: {
+                trigger: '.hero',
+                start: "top top",
+                end: "20% top",
+                scrub: true
+            }
+        });
+
+        // Deck pieces parallax on scroll - use scrub for bidirectional animation
+        heroDecks.forEach((piece, i) => {
+            gsap.fromTo(piece,
+                {
+                    y: 0,
+                    opacity: 0.6,
+                    rotation: gsap.utils.random(-15, 15)
+                },
+                {
+                    y: () => window.innerHeight * 0.5,
+                    opacity: 0,
+                    rotation: `+=${(i % 2 === 0 ? 1 : -1) * 30}`,
+                    scrollTrigger: {
+                        trigger: '.hero',
+                        start: "top top",
+                        end: "bottom top",
+                        scrub: 1
+                    }
+                }
+            );
+        });
+
+        // ==========================================
+        // REVEAL ANIMATIONS WITH VELOCITY AWARENESS
+        // ==========================================
+        document.querySelectorAll('.reveal').forEach(el => {
+            gsap.fromTo(el,
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "expo.out",
+                    scrollTrigger: {
+                        trigger: el,
+                        start: "top 90%",
+                        toggleActions: "play none none none"
+                    }
+                }
+            );
+        });
+
+        // ==========================================
+        // THE QUESTION - Underline animation
+        // ==========================================
+        const questionH2 = document.querySelector('.the-question h2');
+        if (questionH2) {
+            ScrollTrigger.create({
+                trigger: questionH2,
+                start: "top 85%",
+                onEnter: () => questionH2.classList.add('visible')
+            });
+        }
+
+        // ==========================================
+        // JOURNEY VISUAL
+        // ==========================================
+        const journeyVisual = document.getElementById('journey-visual');
+        if (journeyVisual) {
+            const journeyProgress = journeyVisual.querySelector('.journey-progress');
+            const journeyMarker = journeyVisual.querySelector('.journey-marker');
+
+            gsap.fromTo(journeyProgress,
+                { width: "0%" },
+                {
+                    width: "25%",
+                    duration: 2,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: journeyVisual,
+                        start: "top 85%",
+                        toggleActions: "play none none none"
+                    }
+                }
+            );
+
+            gsap.fromTo(journeyMarker,
+                { opacity: 0, y: 15 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    scrollTrigger: {
+                        trigger: journeyVisual,
+                        start: "top 85%",
+                        toggleActions: "play none none none"
+                    }
+                }
+            );
+        }
+
+        // ==========================================
+        // DECK VISUAL - 3D Card Spread
+        // ==========================================
+        const deckVisual = document.getElementById('deck-visual');
+        if (deckVisual) {
+            ScrollTrigger.create({
+                trigger: deckVisual,
+                start: "top 80%",
+                onEnter: () => {
+                    deckVisual.classList.add('visible');
+                }
+            });
+        }
+
+        // Deck words with magnetic hover
+        const deckWords = document.getElementById('deck-words');
+        if (deckWords) {
+            const words = deckWords.querySelectorAll('.deck-word');
+            gsap.fromTo(words,
+                { opacity: 0, y: 25, scale: 0.9 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 0.8,
+                    stagger: 0.12,
+                    ease: "expo.out",
+                    scrollTrigger: {
+                        trigger: deckWords,
+                        start: "top 90%",
+                        toggleActions: "play none none none"
+                    }
+                }
+            );
+        }
+
+        // ==========================================
+        // SHIFT SECTION - Radial glow
+        // ==========================================
+        const shiftSection = document.getElementById('shift-section');
+        if (shiftSection) {
+            const shiftBg = shiftSection.querySelector('.shift-bg');
+
+            gsap.fromTo(shiftBg,
+                { opacity: 0, scale: 0.6 },
+                {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 2,
+                    ease: "expo.out",
+                    scrollTrigger: {
+                        trigger: shiftSection,
+                        start: "top 75%",
+                        end: "bottom 40%",
+                        toggleActions: "play reverse play reverse"
+                    }
+                }
+            );
+        }
+
+        // ==========================================
+        // VALUE CURVE - SCROLL-DRIVEN DRAWING
+        // ==========================================
+        const valueCurve = document.getElementById('value-curve');
+        if (valueCurve) {
+            const curveDeck = valueCurve.querySelector('.curve-deck');
+            const curveBuilding = valueCurve.querySelector('.curve-building');
+            const curveIntersection = valueCurve.querySelector('.curve-intersection');
+            const curveNow = valueCurve.querySelector('.curve-now');
+            const curveLabels = valueCurve.querySelectorAll('.curve-label');
+
+            const deckLength = curveDeck.getTotalLength();
+            const buildingLength = curveBuilding.getTotalLength();
+
+            curveDeck.style.strokeDasharray = deckLength;
+            curveDeck.style.strokeDashoffset = deckLength;
+            curveBuilding.style.strokeDasharray = buildingLength;
+            curveBuilding.style.strokeDashoffset = buildingLength;
+
+            const curveTimeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: valueCurve,
+                    start: "top 90%",
+                    end: "bottom 25%",
+                    scrub: 1,
+                }
+            });
+
+            curveTimeline
+                .to(curveDeck, { strokeDashoffset: 0, duration: 0.5, ease: "none" })
+                .to(curveBuilding, { strokeDashoffset: 0, duration: 0.5, ease: "none" }, "-=0.3")
+                .to(curveIntersection, { opacity: 1, scale: 1, duration: 0.2 }, "-=0.2")
+                .to(curveNow, { opacity: 1, duration: 0.2 }, "-=0.1")
+                .to(curveLabels, { opacity: 1, duration: 0.2, stagger: 0.05 }, "-=0.1");
+        }
+
+        // ==========================================
+        // PRESSURE VISUAL
+        // ==========================================
+        const pressureVisual = document.querySelector('.pressure-visual');
+        if (pressureVisual) {
+            const pressureSides = pressureVisual.querySelectorAll('.pressure-side');
+            const pressureNow = pressureVisual.querySelector('.pressure-now');
+            const pressureArrows = pressureVisual.querySelectorAll('.pressure-arrow');
+
+            const pressureTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: pressureVisual,
+                    start: "top 85%",
+                    toggleActions: "play none none none"
+                }
+            });
+
+            pressureTl
+                .fromTo(pressureSides[0], { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.8, ease: "expo.out" })
+                .fromTo(pressureSides[1], { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.8, ease: "expo.out" }, "-=0.6")
+                .fromTo(pressureArrows, { opacity: 0 }, { opacity: 1, duration: 0.5, stagger: 0.1 }, "-=0.4")
+                .fromTo(pressureNow, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "-=0.3");
+        }
+
+        // ==========================================
+        // DIVERGING LINES VISUAL - Scroll-driven
+        // ==========================================
+        const divergeVisual = document.getElementById('diverge-visual');
+        if (divergeVisual) {
+            const divergeLines = divergeVisual.querySelectorAll('.diverge-line');
+            const divergeOrigin = divergeVisual.querySelector('.diverge-origin');
+            const divergeOriginLabel = divergeVisual.querySelector('.diverge-origin-label');
+            const divergeEndpoints = divergeVisual.querySelectorAll('.diverge-endpoint');
+
+            // Calculate path lengths for each line
+            divergeLines.forEach(line => {
+                const length = line.getTotalLength();
+                line.style.strokeDasharray = length;
+                line.style.strokeDashoffset = length;
+            });
+
+            // Create timeline for scroll-driven animation
+            const divergeTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: divergeVisual,
+                    start: "top 90%",
+                    end: "bottom 25%",
+                    scrub: 1,
+                }
+            });
+
+            // Animate origin point first
+            divergeTl
+                .to(divergeOrigin, { opacity: 1, scale: 1, duration: 0.1 })
+                .to(divergeOriginLabel, { opacity: 1, duration: 0.1 }, "<")
+                // Draw all lines simultaneously with slight stagger
+                .to(divergeLines, {
+                    strokeDashoffset: 0,
+                    duration: 0.5,
+                    stagger: 0.05,
+                    ease: "none"
+                }, "-=0.05")
+                // Pop in endpoints as lines reach them
+                .to(divergeEndpoints, {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.15,
+                    stagger: 0.05,
+                    ease: "back.out(2)"
+                }, "-=0.2");
+        }
+
+        // ==========================================
+        // SPECTRUM - Flow Animation
+        // ==========================================
+        const spectrumContainer = document.getElementById('spectrum-container');
+        if (spectrumContainer) {
+            const spectrumMarkers = spectrumContainer.querySelectorAll('.spectrum-marker');
+            const spectrumItems = spectrumContainer.querySelectorAll('.spectrum-item');
+
+            const spectrumTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: spectrumContainer,
+                    start: "top 80%",
+                    toggleActions: "play none none none"
+                }
+            });
+
+            spectrumTl
+                .fromTo(spectrumMarkers,
+                    { opacity: 0, scale: 0 },
+                    { opacity: 1, scale: 1, duration: 0.6, stagger: 0.15, ease: "back.out(2)" }
+                )
+                .fromTo(spectrumItems,
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: "expo.out" },
+                    "-=0.4"
+                );
+        }
+
+        // ==========================================
+        // SKEPTIC SECTION - 1985 vs 2025 Comparison
+        // ==========================================
+        const skepticSection = document.querySelector('.skeptic');
+        if (skepticSection) {
+            const skepticItems = skepticSection.querySelectorAll('.skeptic-item');
+            const skepticDivider = skepticSection.querySelector('.skeptic-divider');
+
+            const skepticTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.skeptic-grid',
+                    start: "top 85%",
+                    toggleActions: "play none none none"
+                }
+            });
+
+            skepticTl
+                .fromTo(skepticItems[0],
+                    { opacity: 0, x: -30 },
+                    { opacity: 1, x: 0, duration: 0.8, ease: "expo.out" }
+                )
+                .fromTo(skepticDivider,
+                    { opacity: 0, scale: 0.8 },
+                    { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" },
+                    "-=0.4"
+                )
+                .fromTo(skepticItems[1],
+                    { opacity: 0, x: 30 },
+                    { opacity: 1, x: 0, duration: 0.8, ease: "expo.out" },
+                    "-=0.3"
+                );
+        }
+
+        // ==========================================
+        // PROOF CARDS
+        // ==========================================
+        const proofGrid = document.getElementById('proof-grid');
+        if (proofGrid) {
+            const proofCards = proofGrid.querySelectorAll('.proof-card');
+
+            gsap.fromTo(proofCards,
+                { opacity: 0, y: 50, rotateX: 10 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    rotateX: 0,
+                    duration: 0.9,
+                    stagger: 0.15,
+                    ease: "expo.out",
+                    scrollTrigger: {
+                        trigger: proofGrid,
+                        start: "top 85%",
+                        toggleActions: "play none none none"
+                    },
+                    onComplete: () => {
+                        proofCards.forEach(card => card.classList.add('visible'));
+                    }
+                }
+            );
+        }
+
+        // ==========================================
+        // FLOATING SHAPES - Deep Parallax
+        // ==========================================
+        document.querySelectorAll('.shape').forEach((shape, i) => {
+            gsap.to(shape, {
+                y: () => window.scrollY * (0.03 + (i * 0.015)),
+                rotation: `+=${(i % 2 === 0 ? 1 : -1) * 10}`,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: document.body,
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 0.5
+                }
+            });
+        });
+
+        // ==========================================
+        // SMOOTH SECTION TRANSITIONS
+        // ==========================================
+        document.querySelectorAll('.chapter').forEach((chapter, i) => {
+            ScrollTrigger.create({
+                trigger: chapter,
+                start: "top 85%",
+                onEnter: () => {
+                    gsap.to(chapter, {
+                        opacity: 1,
+                        duration: 0.3
+                    });
+                }
+            });
+        });
+
+        // ==========================================
+        // KEYBOARD NAVIGATION
+        // ==========================================
+        document.addEventListener('keydown', (e) => {
+            const sections = document.querySelectorAll('section');
+            let current = 0;
+
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 3) {
+                    current = index;
+                }
+            });
+
+            if (e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                const next = Math.min(current + 1, sections.length - 1);
+                gsap.to(window, {
+                    scrollTo: { y: sections[next], offsetY: 0 },
+                    duration: 1,
+                    ease: "expo.inOut"
+                });
+            }
+
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prev = Math.max(current - 1, 0);
+                gsap.to(window, {
+                    scrollTo: { y: sections[prev], offsetY: 0 },
+                    duration: 1,
+                    ease: "expo.inOut"
+                });
+            }
+        });
+
+        // ==========================================
+        // LEAVE SECTION - Underline animation
+        // ==========================================
+        const leaveSection = document.querySelector('.leave');
+        if (leaveSection) {
+            const leaveH2 = leaveSection.querySelector('h2');
+            if (leaveH2) {
+                ScrollTrigger.create({
+                    trigger: leaveH2,
+                    start: "top 85%",
+                    onEnter: () => leaveH2.classList.add('visible')
+                });
+            }
+        }
+
+        // ==========================================
+        // SCROLL VELOCITY EFFECT
+        // ==========================================
+        let lastScroll = 0;
+        let scrollVelocity = 0;
+
+        ScrollTrigger.create({
+            onUpdate: (self) => {
+                scrollVelocity = Math.abs(self.getVelocity());
+
+                // Apply velocity-based effects
+                const velocityFactor = Math.min(scrollVelocity / 5000, 1);
+
+                // Subtle scale on fast scroll
+                gsap.to('.chapter', {
+                    scale: 1 - (velocityFactor * 0.02),
+                    duration: 0.1,
+                    overwrite: 'auto'
+                });
+            }
+        });
+    </script>
+</body>
+</html>
