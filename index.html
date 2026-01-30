@@ -510,6 +510,102 @@
             to { opacity: 1; }
         }
 
+        /* Persistent Navigation Arrow */
+        .nav-arrow {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .nav-arrow.visible {
+            opacity: 1;
+        }
+
+        .nav-arrow.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .nav-arrow-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s var(--ease-expo);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-arrow:hover .nav-arrow-circle {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .nav-arrow:active .nav-arrow-circle {
+            transform: scale(0.95);
+        }
+
+        .nav-arrow svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--white);
+            stroke-width: 2;
+            fill: none;
+            animation: arrowBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(4px); }
+        }
+
+        .nav-arrow-label {
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            transition: color 0.3s ease;
+        }
+
+        .nav-arrow:hover .nav-arrow-label {
+            color: var(--gray-300);
+        }
+
+        /* Light background adjustments */
+        .nav-arrow.on-light .nav-arrow-circle {
+            background: rgba(0,0,0,0.03);
+            border-color: rgba(0,0,0,0.15);
+        }
+
+        .nav-arrow.on-light:hover .nav-arrow-circle {
+            background: rgba(0,0,0,0.08);
+        }
+
+        .nav-arrow.on-light svg {
+            stroke: var(--gray-700);
+        }
+
+        .nav-arrow.on-light .nav-arrow-label {
+            color: var(--gray-600);
+        }
+
+        .nav-arrow.on-light:hover .nav-arrow-label {
+            color: var(--gray-800);
+        }
+
         /* ==================== */
         /* THE QUESTION         */
         /* ==================== */
@@ -2372,6 +2468,16 @@
         <p>This presentation is itself an argument.</p>
     </footer>
 
+    <!-- Navigation Arrow -->
+    <div class="nav-arrow" id="nav-arrow">
+        <div class="nav-arrow-circle">
+            <svg viewBox="0 0 24 24">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
+        <span class="nav-arrow-label">Next</span>
+    </div>
+
     <script>
         // Register GSAP plugins
         gsap.registerPlugin(ScrollTrigger);
@@ -2905,6 +3011,82 @@
                     duration: 1,
                     ease: "expo.inOut"
                 });
+            }
+        });
+
+        // ==========================================
+        // NAV ARROW - Click to advance sections
+        // ==========================================
+        const navArrow = document.getElementById('nav-arrow');
+        const allSections = document.querySelectorAll('section');
+
+        // Show nav arrow after initial load
+        setTimeout(() => {
+            navArrow.classList.add('visible');
+        }, 2000);
+
+        // Get current section index
+        function getCurrentSection() {
+            let current = 0;
+            allSections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 3) {
+                    current = index;
+                }
+            });
+            return current;
+        }
+
+        // Navigate to next section on click
+        navArrow.addEventListener('click', () => {
+            const current = getCurrentSection();
+            const next = Math.min(current + 1, allSections.length - 1);
+
+            gsap.to(window, {
+                scrollTo: { y: allSections[next], offsetY: 0 },
+                duration: 1,
+                ease: "expo.inOut"
+            });
+        });
+
+        // Hide arrow at last section, update styling based on background
+        ScrollTrigger.create({
+            trigger: document.body,
+            start: "top top",
+            end: "bottom bottom",
+            onUpdate: () => {
+                const current = getCurrentSection();
+                const isLastSection = current >= allSections.length - 1;
+
+                // Hide at last section
+                if (isLastSection) {
+                    navArrow.classList.add('hidden');
+                } else {
+                    navArrow.classList.remove('hidden');
+                }
+
+                // Update label
+                const label = navArrow.querySelector('.nav-arrow-label');
+                if (current === 0) {
+                    label.textContent = 'Begin';
+                } else {
+                    label.textContent = 'Next';
+                }
+
+                // Update arrow styling based on current section background
+                const currentSection = allSections[current];
+                const chapter = currentSection.closest('.chapter');
+                const isLight = chapter && (
+                    chapter.classList.contains('chapter-cream') ||
+                    chapter.classList.contains('chapter-sage') ||
+                    chapter.classList.contains('chapter-warm')
+                );
+
+                if (isLight) {
+                    navArrow.classList.add('on-light');
+                } else {
+                    navArrow.classList.remove('on-light');
+                }
             }
         });
 
