@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beyond Decks</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300..700&display=swap" rel="stylesheet">
+    <!-- GSAP 3.14 + Plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/ScrollToPlugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/SplitText.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14/dist/DrawSVGPlugin.min.js"></script>
+    <style>
+        :root {
+            --black: #0A0A0A;
+            --dark: #1A1A1A;
+            --white: #FAFAFA;
+            --cream: #FAF7F2;
+            --cream-dark: #F0EBE3;
+            --cream-light: #FDFCFA;
+            --gray-100: #F5F5F5;
+            --gray-200: #E5E5E5;
+            --gray-300: #D4D4D4;
+            --gray-400: #A3A3A3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --accent: #4F46E5;
+            --accent-warm: #DC6843;
+            --font-serif: 'Instrument Serif', Georgia, serif;
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 16px; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+            position: fixed;
+            inset: 0;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* ============================== */
+        /* CINEMA VIEWPORT + STRIP        */
+        /* ============================== */
+        .cinema-viewport {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+        }
+
+        .cinema-strip {
+            display: flex;
+            flex-wrap: nowrap;
+            height: 100%;
+        }
+
+        /* ============================== */
+        /* FRAME BASE                     */
+        /* ============================== */
+        .frame {
+            flex: 0 0 100vw;
+            width: 100vw;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 12vw;
+            text-align: center;
+            contain: layout style paint;
+        }
+
+        /* Elements start hidden via GSAP inline styles on load.
+           No CSS pre-hide — GSAP manages all opacity state. */
+
+        /* Composition variants */
+        .comp-left {
+            text-align: left;
+            align-items: flex-start;
+        }
+        .comp-right {
+            text-align: right;
+            align-items: flex-end;
+        }
+        .comp-bottom-left {
+            justify-content: flex-end;
+            align-items: flex-start;
+            text-align: left;
+            padding-bottom: 15vh;
+        }
+        .comp-top {
+            justify-content: flex-start;
+            padding-top: 15vh;
+        }
+        .comp-full-bleed {
+            padding: 80px 8vw;
+        }
+
+        /* Background classes */
+        .bg-cream { background: var(--cream); color: var(--black); }
+        .bg-warm { background: linear-gradient(180deg, var(--cream-light) 0%, var(--cream) 100%); color: var(--black); }
+        .bg-dark { background: var(--black); color: var(--white); }
+        .bg-dark-deep { background-color: #030303; color: var(--white); }
+        .bg-dark-accent { background: radial-gradient(ellipse at 25% 55%, rgba(79, 70, 229, 0.07) 0%, #0A0A0A 55%); color: var(--white); }
+        .bg-dark-warm { background: radial-gradient(ellipse at 70% 40%, rgba(220, 104, 67, 0.06) 0%, #0A0A0A 55%); color: var(--white); }
+        .bg-dark-subtle { background-color: #0A0A0A; background-image: linear-gradient(180deg, #0F0F0F 0%, #0A0A0A 100%); color: var(--white); }
+        .atmo-bg { background-size: cover; background-position: center; }
+
+        /* ============================== */
+        /* TYPOGRAPHY                     */
+        /* ============================== */
+        .label {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 400;
+            line-height: 0.85;
+            letter-spacing: -0.03em;
+        }
+        h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 5.5vw, 4rem);
+            font-weight: 400;
+            line-height: 1.15;
+            letter-spacing: -0.015em;
+        }
+        h3 {
+            font-family: var(--font-serif);
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            font-weight: 400;
+            line-height: 1.25;
+        }
+
+        .statement {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 400;
+            line-height: 1.08;
+            max-width: 1000px;
+        }
+        .statement-xl {
+            font-size: clamp(3.5rem, 8vw, 7rem);
+            max-width: 1100px;
+            line-height: 1.05;
+        }
+        .statement-xxl {
+            font-size: clamp(4rem, 10vw, 9rem);
+            max-width: 1200px;
+            line-height: 1.12;
+            letter-spacing: -0.025em;
+        }
+
+        .large-text {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            line-height: 1.6;
+            max-width: 640px;
+        }
+        .body-text {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: var(--gray-400);
+            max-width: 560px;
+        }
+
+        .bg-cream .body-text, .bg-warm .body-text { color: var(--gray-600); }
+        .bg-cream .label, .bg-warm .label { color: var(--gray-500); }
+
+        em { font-style: italic; }
+        strong { font-weight: 600; }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .accent-underline { position: relative; }
+        .accent-underline::after {
+            content: '';
+            position: absolute;
+            bottom: 0.05em;
+            left: 0;
+            width: 100%;
+            height: 0.08em;
+            background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 1s var(--ease-expo) 0.5s;
+        }
+        .accent-underline.visible::after { transform: scaleX(1); }
+
+        /* ============================== */
+        /* HERO (Beat 0)                  */
+        /* ============================== */
+        .hero h1 {
+            font-size: clamp(5rem, 16vw, 17rem);
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+        }
+        .hero h1 .hero-word { display: block; }
+        .hero h1 .hero-sub { color: var(--gray-400); }
+
+        /* ============================== */
+        /* QUOTE (Beat 1)                 */
+        /* ============================== */
+        .quote-text {
+            font-family: var(--font-serif);
+            font-size: clamp(1.35rem, 3vw, 2rem);
+            font-style: italic;
+            color: var(--gray-300);
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+            line-height: 1.5;
+        }
+
+        /* ============================== */
+        /* JOURNEY LINE (Beat 2)          */
+        /* ============================== */
+        .journey-svg {
+            width: 100%;
+            max-width: 850px;
+            height: 95px;
+            margin: 3rem 0;
+        }
+
+        /* ============================== */
+        /* DECK CARDS (Beat 3)            */
+        /* ============================== */
+        .deck-visual {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            margin: 3rem auto;
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+        .deck-card {
+            position: absolute;
+            width: 180px;
+            height: 120px;
+            left: 50%;
+            top: 50%;
+            margin-left: -90px;
+            margin-top: -60px;
+            background: linear-gradient(145deg, var(--gray-700) 0%, var(--gray-800) 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transform-style: preserve-3d;
+        }
+        .deck-card::before {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 4px;
+        }
+        .deck-words {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .deck-word {
+            font-family: var(--font-serif);
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            font-style: italic;
+            color: var(--gray-300);
+        }
+
+        /* ============================== */
+        /* WORD PAIRS (Beat 6)            */
+        /* ============================== */
+        .word-pairs {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0.9rem 1.5rem;
+            margin-top: 2.5rem;
+            align-items: center;
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+        }
+        .wp-header {
+            font-family: var(--font-sans);
+            font-size: 0.55rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding-bottom: 0.25rem;
+        }
+        .wp-header-left { color: var(--accent); text-align: right; }
+        .wp-header-right { color: var(--gray-500); text-align: left; }
+        .wp-header-arrow { /* empty spacer cell */ }
+        .wp-left { color: var(--accent); font-style: italic; text-align: right; }
+        .wp-arrow { color: var(--gray-400); font-size: 0.85rem; text-align: center; }
+        .wp-right { color: var(--gray-500); letter-spacing: 0.05em; text-align: left; }
+
+        /* ============================== */
+        /* SHIFT (Beat 8)                 */
+        /* ============================== */
+        .shift-comparison {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            gap: 0;
+            width: 100%;
+            max-width: 700px;
+            margin-top: 3rem;
+            align-items: center;
+        }
+        .shift-side { padding: 2rem; border-radius: 12px; text-align: left; }
+        .shift-before {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px 0 0 12px;
+        }
+        .shift-now {
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            border-radius: 0 12px 12px 0;
+        }
+        .shift-center { display: flex; align-items: center; justify-content: center; }
+        .shift-center span { font-size: 2rem; color: var(--accent); }
+        .shift-side .shift-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem; }
+        .shift-before .shift-label { color: var(--gray-500); }
+        .shift-now .shift-label { color: var(--accent); }
+        .shift-side h4 { font-family: var(--font-serif); font-size: 1.35rem; margin-bottom: 0.5rem; }
+        .shift-side p:not(.shift-label) { font-size: 0.85rem; color: var(--gray-400); line-height: 1.5; }
+        .shift-now p:not(.shift-label) { color: var(--gray-300); }
+
+        /* ============================== */
+        /* SKEPTIC (Beat 9)               */
+        /* ============================== */
+        .pattern-quote {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+        }
+        .pattern-year { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--accent); flex-shrink: 0; }
+        .pattern-text { font-family: var(--font-serif); font-size: 1.15rem; font-style: italic; color: var(--gray-300); }
+
+        /* ============================== */
+        /* EVIDENCE STATS (Beat 10)       */
+        /* ============================== */
+        .stat-full { margin: 0.5rem 0; }
+        .stat-number {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 400;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-warm) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label { font-size: clamp(1rem, 2vw, 1.25rem); color: var(--gray-400); margin-top: 0.5rem; }
+        .stat-source { font-size: 0.8rem; font-weight: 500; color: var(--gray-600); margin-top: 0.25rem; }
+
+        /* ============================== */
+        /* VALUE CURVE (Beat 12)          */
+        /* ============================== */
+        .value-curve-svg { width: 100%; max-width: 600px; height: auto; margin: 2rem 0; }
+        .curve-line { fill: none; stroke-linecap: round; }
+
+        /* ============================== */
+        /* DIVERGE VISUAL (Beat 13)       */
+        /* ============================== */
+        .diverge-svg { width: 100%; max-width: 800px; height: 280px; margin: 1rem auto; }
+        .diverge-svg svg { width: 100%; height: 100%; overflow: visible; }
+
+        /* ============================== */
+        /* SPECTRUM (Beat 17)             */
+        /* ============================== */
+        .spectrum-container { width: 100%; max-width: 960px; }
+        .spectrum-track {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        .spectrum-item {
+            background: var(--cream-light);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: left;
+            position: relative;
+        }
+        .spectrum-item:nth-child(1) { border-top: 3px solid var(--accent); }
+        .spectrum-item:nth-child(2) { border-top: 3px solid #7C6EE6; }
+        .spectrum-item:nth-child(3) { border-top: 3px solid #A87ADB; }
+        .spectrum-item:nth-child(4) { border-top: 3px solid var(--accent-warm); }
+        .spectrum-item .step-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 24px; height: 24px; border-radius: 50%;
+            font-size: 0.65rem; font-weight: 700; margin-bottom: 0.75rem;
+        }
+        .spectrum-item:nth-child(1) .step-number { background: rgba(79, 70, 229, 0.1); color: var(--accent); }
+        .spectrum-item:nth-child(2) .step-number { background: rgba(124, 110, 230, 0.1); color: #7C6EE6; }
+        .spectrum-item:nth-child(3) .step-number { background: rgba(168, 122, 219, 0.1); color: #A87ADB; }
+        .spectrum-item:nth-child(4) .step-number { background: rgba(220, 104, 67, 0.1); color: var(--accent-warm); }
+        .spectrum-item .time { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .spectrum-item h4 { font-family: var(--font-serif); font-size: 1rem; color: var(--gray-800); margin-bottom: 0.4rem; line-height: 1.3; }
+        .spectrum-item p { font-size: 0.75rem; color: var(--gray-600); line-height: 1.5; }
+
+        /* ============================== */
+        /* MORPH CARDS (Beats 19-22)      */
+        /* ============================== */
+        .morph-container { position: relative; width: 100%; max-width: 800px; margin: 2rem auto; }
+        .morph-card { padding: 3rem; border-radius: 16px; text-align: left; position: relative; overflow: hidden; }
+        .morph-before { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
+        .morph-after {
+            position: absolute; inset: 0;
+            background: rgba(10, 10, 12, 0.85);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            opacity: 0; display: flex; flex-direction: column; justify-content: center; padding: 3rem;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .morph-type { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem; }
+        .morph-before .morph-type { color: var(--gray-500); }
+        .morph-after .morph-type { color: var(--accent); }
+        .morph-card h3 { font-family: var(--font-serif); font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 1rem; }
+        .morph-before h3 { color: var(--gray-400); }
+        .morph-after h3 { color: var(--white); }
+        .morph-card .morph-desc { font-size: 0.95rem; line-height: 1.6; }
+        .morph-before .morph-desc { color: var(--gray-500); }
+        .morph-after .morph-desc { color: var(--gray-300); }
+        .morph-bg {
+            position: absolute; inset: 0; z-index: 0;
+            background-size: cover; background-position: center;
+            opacity: 0;
+        }
+        .morph-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background: rgba(10, 10, 10, 0.55);
+        }
+        .morph-container, .morph-bg + .label { position: relative; z-index: 1; }
+        .morph-after.alive { animation: alivePulse 3s ease-in-out infinite; }
+        @keyframes alivePulse {
+            0%, 100% { border-color: rgba(79, 70, 229, 0.3); }
+            50% { border-color: rgba(79, 70, 229, 0.6); }
+        }
+
+        /* ============================== */
+        /* TOOLS (Beat 26)                */
+        /* ============================== */
+        .tools { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; margin: 2rem 0; }
+        .tool {
+            font-size: 0.8rem; font-weight: 500; color: var(--gray-600);
+            padding: 0.65rem 1.35rem; background: transparent;
+            border: 1px solid var(--gray-300); border-radius: 100px;
+            transition: all 0.4s var(--ease-expo); cursor: pointer;
+            position: relative; overflow: hidden; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .tool::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--black); transform: scaleX(0);
+            transform-origin: left; transition: transform 0.4s var(--ease-expo); z-index: -1;
+        }
+        .tool:hover { color: var(--cream); border-color: var(--black); transform: translateY(-3px); }
+        .tool:hover::before { transform: scaleX(1); }
+        .tool-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* ============================== */
+        /* FRAME COUNTER                  */
+        /* ============================== */
+        .frame-counter {
+            position: fixed; bottom: 24px; left: 24px; z-index: 50;
+            font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em;
+            color: var(--gray-600); transition: opacity 0.5s ease;
+        }
+
+        /* ============================== */
+        /* NAV HINT                       */
+        /* ============================== */
+        .nav-hint {
+            position: fixed; bottom: 24px; right: 24px; z-index: 50;
+            display: flex; align-items: center; gap: 8px;
+            opacity: 0; transition: opacity 0.5s ease; cursor: pointer;
+        }
+        .nav-hint.visible { opacity: 0.4; }
+        .nav-hint.visible:hover { opacity: 1; }
+        .nav-hint.hidden { opacity: 0; pointer-events: none; }
+        .nav-hint-label { font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-600); }
+        .nav-hint-circle {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s var(--ease-expo);
+        }
+        .nav-hint:hover .nav-hint-circle { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); transform: scale(1.05); }
+        .nav-hint svg { width: 16px; height: 16px; stroke: var(--white); stroke-width: 2; fill: none; }
+        .nav-hint.on-light .nav-hint-circle { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.1); }
+        .nav-hint.on-light:hover .nav-hint-circle { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); }
+        .nav-hint.on-light svg { stroke: var(--gray-600); }
+        .nav-hint.on-light .nav-hint-label { color: var(--gray-500); }
+
+        /* ============================== */
+        /* FOOTER                         */
+        /* ============================== */
+        .frame-footer {
+            position: absolute; bottom: 40px; left: 0; right: 0; text-align: center;
+        }
+        .frame-footer p { font-size: 0.7rem; font-style: italic; color: var(--gray-500); }
+
+        .sr-only {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+        }
+
+        @media (max-width: 768px) {
+            .frame { padding: 60px 7vw; }
+            .shift-comparison { grid-template-columns: 1fr; }
+            .shift-center { padding: 1rem; }
+            .shift-before { border-radius: 12px 12px 0 0; }
+            .shift-now { border-radius: 0 0 12px 12px; }
+            .spectrum-track { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="cinema-viewport" role="region" aria-roledescription="presentation" aria-label="Beyond Decks presentation">
+        <div class="cinema-strip" id="cinema-strip">
+
+            <!-- BEAT 0 — Title -->
+            <div class="frame hero bg-dark" id="beat-0" role="group" aria-roledescription="slide" aria-label="Slide 1: Title">
+                <h1 class="hero-title">
+                    <span class="hero-word">Beyond</span>
+                    <span class="hero-word hero-sub">Decks</span>
+                </h1>
+            </div>
+
+            <!-- BEAT 1 — The Question -->
+            <div class="frame bg-dark" id="beat-1" role="group" aria-roledescription="slide" aria-label="Slide 2: The Question">
+                <p class="quote-text" id="quote-text">Win on relationships.<br>Be trusted partners, not just vendors.</p>
+                <h2 id="question-text">But what does it actually mean<br>to be <em class="accent-underline">indispensable?</em></h2>
+            </div>
+
+            <!-- BEAT 2 — We Sell Transformation -->
+            <div class="frame bg-cream comp-top" id="beat-2" role="group" aria-roledescription="slide" aria-label="Slide 3: We Sell Transformation">
+                <p class="label">What we sell</p>
+                <h2>We sell <em>transformation.</em></h2>
+                <div class="journey-svg">
+                    <svg viewBox="0 0 900 95" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <linearGradient id="journeyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#4F46E5"/>
+                                <stop offset="100%" style="stop-color:#DC6843"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- WE FOCUS HERE bracket -->
+                        <g id="journey-marker">
+                            <line x1="50" y1="20" x2="279" y2="20" stroke="#4F46E5" stroke-width="1.5" opacity="0.5"/>
+                            <line x1="50" y1="14" x2="50" y2="26" stroke="#4F46E5" stroke-width="1.5" opacity="0.5"/>
+                            <line x1="279" y1="14" x2="279" y2="26" stroke="#4F46E5" stroke-width="1.5" opacity="0.5"/>
+                            <text x="164" y="10" text-anchor="middle" font-size="8" fill="#4F46E5" font-weight="600" font-family="Inter, sans-serif" letter-spacing="0.08em">WE FOCUS HERE</text>
+                        </g>
+                        <!-- Main line -->
+                        <line x1="50" y1="50" x2="850" y2="50" stroke="#D4D4D4" stroke-width="2"/>
+                        <line id="journey-progress" x1="50" y1="50" x2="279" y2="50" stroke="url(#journeyGrad)" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Active dots (our focus) -->
+                        <circle class="j-dot" cx="50" cy="50" r="6" fill="#4F46E5"/>
+                        <circle class="j-dot" cx="164" cy="50" r="6" fill="#4F46E5"/>
+                        <circle class="j-dot" cx="279" cy="50" r="6" fill="#4F46E5"/>
+                        <!-- Future dots -->
+                        <circle class="j-dot" cx="393" cy="50" r="5" fill="#D4D4D4"/>
+                        <circle class="j-dot" cx="507" cy="50" r="5" fill="#D4D4D4"/>
+                        <circle class="j-dot" cx="621" cy="50" r="5" fill="#D4D4D4"/>
+                        <circle class="j-dot" cx="736" cy="50" r="5" fill="#D4D4D4"/>
+                        <circle class="j-dot" cx="850" cy="50" r="5" fill="#D4D4D4"/>
+                        <!-- Labels -->
+                        <text x="50" y="78" text-anchor="middle" font-size="9" fill="#737373" font-family="Inter, sans-serif">Kickoff</text>
+                        <text x="164" y="78" text-anchor="middle" font-size="9" fill="#737373" font-family="Inter, sans-serif">Strategy</text>
+                        <text x="279" y="78" text-anchor="middle" font-size="9" fill="#737373" font-family="Inter, sans-serif">Handoff</text>
+                        <text x="393" y="78" text-anchor="middle" font-size="9" fill="#A3A3A3" font-family="Inter, sans-serif">Build</text>
+                        <text x="507" y="78" text-anchor="middle" font-size="9" fill="#A3A3A3" font-family="Inter, sans-serif">Launch</text>
+                        <text x="621" y="78" text-anchor="middle" font-size="9" fill="#A3A3A3" font-family="Inter, sans-serif">Measure</text>
+                        <text x="736" y="78" text-anchor="middle" font-size="9" fill="#A3A3A3" font-family="Inter, sans-serif">Iterate</text>
+                        <text x="850" y="78" text-anchor="middle" font-size="9" fill="#A3A3A3" font-family="Inter, sans-serif">Scale</text>
+                    </svg>
+                </div>
+                <p class="large-text" style="color: var(--gray-600);">A journey that unfolds over months and years.<br>A system that requires sustained force.</p>
+            </div>
+
+            <!-- BEAT 3 — We Deliver Moments -->
+            <div class="frame bg-dark" id="beat-3" role="group" aria-roledescription="slide" aria-label="Slide 4: We Deliver Moments">
+                <p class="label">What we deliver</p>
+                <h2>We package our thinking into <em>decks.</em></h2>
+                <div class="deck-visual" id="deck-visual">
+                    <div class="deck-card"></div>
+                    <div class="deck-card"></div>
+                    <div class="deck-card"></div>
+                </div>
+                <div class="deck-words">
+                    <span class="deck-word">Beautiful</span>
+                    <span class="deck-word">Portable</span>
+                    <span class="deck-word">Persuasive</span>
+                </div>
+                <p class="body-text" style="margin: 0 auto;">They travel through organizations,<br>align stakeholders, evangelize&nbsp;ideas.</p>
+            </div>
+
+            <!-- BEAT 4 — Then We Leave -->
+            <div class="frame bg-dark comp-bottom-left" id="beat-4" role="group" aria-roledescription="slide" aria-label="Slide 5: Then We Leave">
+                <h2 class="statement" style="color: var(--gray-400);">We hand off the recipe<br><strong style="color: var(--white);">and leave the kitchen.</strong></h2>
+            </div>
+
+            <!-- BEAT 5 — The Paradox -->
+            <div class="frame bg-dark-deep atmo-bg" id="beat-5" role="group" aria-roledescription="slide" aria-label="Slide 6: The Paradox" style="background-image: linear-gradient(rgba(3,3,3,0.3), rgba(3,3,3,0.4)), url('images/atmo-paradox.png');">
+                <h2 class="statement statement-xxl" id="paradox-text">You can't be a true partner to a journey you're&nbsp;not&nbsp;on.</h2>
+            </div>
+
+            <!-- BEAT 6 — Why We Leave -->
+            <div class="frame bg-cream" id="beat-6" role="group" aria-roledescription="slide" aria-label="Slide 7: Why We Leave">
+                <p class="label">Why we leave</p>
+                <h3>Our thinking ends<br>where the deck ends.</h3>
+                <p class="body-text" style="margin: 1.5rem auto 0; color: var(--gray-600);">Not because we chose to stop — but because building<br>anything more meant different talent, different timelines,<br>different&nbsp;economics.</p>
+                <div class="word-pairs">
+                    <span class="wp-header wp-header-left">Thinking</span>
+                    <span class="wp-header wp-header-arrow"></span>
+                    <span class="wp-header wp-header-right">Deck</span>
+                    <span class="wp-left">dynamic</span>
+                    <span class="wp-arrow">&rarr;</span>
+                    <span class="wp-right">static</span>
+                    <span class="wp-left">evolving</span>
+                    <span class="wp-arrow">&rarr;</span>
+                    <span class="wp-right">frozen</span>
+                    <span class="wp-left">alive</span>
+                    <span class="wp-arrow">&rarr;</span>
+                    <span class="wp-right">filed</span>
+                </div>
+            </div>
+
+            <!-- BEAT 8 — That's Changed -->
+            <div class="frame bg-dark" id="beat-8" role="group" aria-roledescription="slide" aria-label="Slide 8: That's Changed">
+                <p class="label">The shift</p>
+                <h2>Building is now <em class="gradient-text">nearly free.</em></h2>
+                <p class="large-text" style="color: var(--gray-400); margin-top: 1rem;">The same hours spent perfecting a deck<br>can now produce a working prototype.</p>
+                <div class="shift-comparison" id="shift-comparison">
+                    <div class="shift-side shift-before">
+                        <p class="shift-label">Before</p>
+                        <h4>40 hours</h4>
+                        <p>A polished deck. Static. Filed after one meeting.</p>
+                    </div>
+                    <div class="shift-center"><span>→</span></div>
+                    <div class="shift-side shift-now">
+                        <p class="shift-label">Now</p>
+                        <h4>40 hours</h4>
+                        <p>A working prototype. Interactive. Lives beyond the engagement.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEAT 9 — Not Developers -->
+            <div class="frame bg-dark" id="beat-9" role="group" aria-roledescription="slide" aria-label="Slide 9: Not Developers">
+                <p class="quote-text" style="color: var(--gray-400); font-size: clamp(1.75rem, 4vw, 2.75rem);">"But we're not developers."</p>
+                <h2 style="margin-bottom: 1.5rem;">That's the point.</h2>
+                <p class="body-text" style="margin: 0 auto 3rem; text-align: center; color: var(--gray-400);">The barrier isn't skill — it's imagination.<br>We've seen this before.</p>
+                <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 550px; width: 100%;" id="pattern-quotes">
+                    <div class="pattern-quote"><span class="pattern-year">1985:</span><span class="pattern-text">"But we're designers, not typesetters."</span></div>
+                    <div class="pattern-quote" style="margin-left: 1.5rem;"><span class="pattern-year">2000:</span><span class="pattern-text">"But we're creatives, not coders."</span></div>
+                    <div class="pattern-quote" style="margin-left: 3rem;"><span class="pattern-year">2026:</span><span class="pattern-text">"But we're strategists, not developers."</span></div>
+                </div>
+            </div>
+
+            <!-- BEAT 10 — Evidence -->
+            <div class="frame bg-dark" id="beat-10" role="group" aria-roledescription="slide" aria-label="Slide 10: Evidence">
+                <p class="label">The evidence</p>
+                <div id="stats-container" style="display: flex; flex-direction: column; align-items: center; gap: 2rem; margin-top: 1rem;">
+                    <div class="stat-full" data-target="41" data-suffix="%">
+                        <div class="stat-number"><span class="counter">0</span>%</div>
+                        <p class="stat-label">of all code globally<br>is now AI-generated</p>
+                        <p class="stat-source">Google, 2024</p>
+                    </div>
+                    <div class="stat-full" data-target="500" data-prefix="$">
+                        <div class="stat-number">$<span class="counter">0</span></div>
+                        <p class="stat-label">+ 1 week replaces $50K + 6 months</p>
+                        <p class="stat-source">JP Morgan</p>
+                    </div>
+                    <div class="stat-full" data-target="100" data-prefix="$" data-suffix="M">
+                        <div class="stat-number">$<span class="counter">0</span>M</div>
+                        <p class="stat-label">ARR — Lovable, "potentially fastest<br>company in&nbsp;history"</p>
+                        <p class="stat-source">2024</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEAT 11 — The Opportunity -->
+            <div class="frame bg-cream" id="beat-11" role="group" aria-roledescription="slide" aria-label="Slide 11: The Opportunity">
+                <p class="label">The opportunity</p>
+                <h2>Give our thinking<br>more <em>surface area.</em></h2>
+                <p class="large-text" style="color: var(--gray-600); margin-top: 1.5rem;">Build assets that compound internally.<br>And for each of us — <strong>a career advantage.</strong></p>
+                <p class="body-text" style="margin: 1.5rem auto 0; color: var(--gray-600); text-align: center;">The people who learn this now<br>won't just be executing the work.<br>They'll be shaping what the work&nbsp;becomes.</p>
+            </div>
+
+            <!-- BEAT 12 — The Risk -->
+            <div class="frame bg-cream" id="beat-12" role="group" aria-roledescription="slide" aria-label="Slide 12: The Risk">
+                <p class="label">The risk</p>
+                <h2 style="margin-bottom: 1rem;">Decks will feel<br>increasingly <em>thin.</em></h2>
+                <div class="value-curve-svg">
+                    <svg viewBox="0 0 740 250" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <linearGradient id="curveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#4F46E5"/>
+                                <stop offset="100%" style="stop-color:#DC6843"/>
+                            </linearGradient>
+                        </defs>
+                        <line x1="40" y1="210" x2="560" y2="210" stroke="#D4D4D4" stroke-width="1"/>
+                        <line x1="40" y1="30" x2="40" y2="210" stroke="#D4D4D4" stroke-width="1"/>
+                        <text x="300" y="240" text-anchor="middle" fill="#737373" font-size="10" font-family="Inter, sans-serif">Time</text>
+                        <path id="curve-deck" class="curve-line" d="M 40 140 Q 180 135 300 140 Q 420 145 560 160" stroke="#9CA3AF" stroke-width="3" opacity="0.8"/>
+                        <path id="curve-building" class="curve-line" d="M 40 190 Q 180 180 300 140 Q 420 80 560 40" stroke="url(#curveGrad)" stroke-width="4"/>
+                        <circle id="curve-intersect" cx="300" cy="140" r="6" fill="#DC6843" opacity="0"/>
+                        <text id="curve-label-deck" x="570" y="175" font-size="11" font-weight="600" fill="#6B7280" font-family="Inter, sans-serif" opacity="0">Decks alone</text>
+                        <text id="curve-label-building" x="570" y="30" font-size="11" font-weight="600" fill="#4F46E5" font-family="Inter, sans-serif" opacity="0">Decks + Building</text>
+                        <text id="curve-now" x="300" y="125" text-anchor="middle" font-size="9" font-weight="600" fill="#DC6843" font-family="Inter, sans-serif" opacity="0">NOW</text>
+                    </svg>
+                </div>
+                <p class="large-text" style="color: var(--gray-700);"><strong class="gradient-text">The value curve is shifting.</strong><br>We should be ahead of it, not behind it.</p>
+            </div>
+
+            <!-- BEAT 13 — A New Model -->
+            <div class="frame bg-warm" id="beat-13" role="group" aria-roledescription="slide" aria-label="Slide 13: A New Model">
+                <p class="label">The provocation</p>
+                <h2>What if our thinking<br>could take <em>more forms?</em></h2>
+                <div class="diverge-svg" id="diverge-visual">
+                    <svg viewBox="0 0 800 280" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4F46E5"/><stop offset="100%" style="stop-color:#7C6EE6"/></linearGradient>
+                            <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4F46E5"/><stop offset="100%" style="stop-color:#A87ADB"/></linearGradient>
+                            <linearGradient id="lg3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4F46E5"/><stop offset="100%" style="stop-color:#EC4899"/></linearGradient>
+                            <linearGradient id="lg4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4F46E5"/><stop offset="100%" style="stop-color:#10B981"/></linearGradient>
+                            <linearGradient id="lg5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4F46E5"/><stop offset="100%" style="stop-color:#F59E0B"/></linearGradient>
+                        </defs>
+                        <text class="diverge-origin-label" x="400" y="14" text-anchor="middle" font-size="11" font-weight="600" fill="#525252" letter-spacing="0.1em" opacity="0">THINKING</text>
+                        <path class="diverge-line" d="M 400 30 Q 300 110 120 200" stroke="url(#lg1)" stroke-width="2.5" fill="none"/>
+                        <path class="diverge-line" d="M 400 30 Q 340 125 240 220" stroke="url(#lg2)" stroke-width="2.5" fill="none"/>
+                        <path class="diverge-line" d="M 400 30 Q 401 130 400 230" stroke="url(#lg3)" stroke-width="2.5" fill="none"/>
+                        <path class="diverge-line" d="M 400 30 Q 460 125 560 220" stroke="url(#lg4)" stroke-width="2.5" fill="none"/>
+                        <path class="diverge-line" d="M 400 30 Q 500 110 680 200" stroke="url(#lg5)" stroke-width="2.5" fill="none"/>
+                        <circle class="diverge-origin" cx="400" cy="30" r="8" fill="#4F46E5" opacity="0"/>
+                        <g class="diverge-endpoint" transform="translate(120, 200)" opacity="0"><circle r="24" fill="#FDFCFA" stroke="#7C6EE6" stroke-width="2"/><text y="4" text-anchor="middle" font-size="14">&#x1F4CA;</text><text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Presentations</text></g>
+                        <g class="diverge-endpoint" transform="translate(240, 220)" opacity="0"><circle r="24" fill="#FDFCFA" stroke="#A87ADB" stroke-width="2"/><text y="4" text-anchor="middle" font-size="14">&#x1F9EE;</text><text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Calculators</text></g>
+                        <g class="diverge-endpoint" transform="translate(400, 230)" opacity="0"><circle r="24" fill="#FDFCFA" stroke="#DC6843" stroke-width="2"/><text y="4" text-anchor="middle" font-size="14">&#x1F527;</text><text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Prototypes</text></g>
+                        <g class="diverge-endpoint" transform="translate(560, 220)" opacity="0"><circle r="24" fill="#FDFCFA" stroke="#10B981" stroke-width="2"/><text y="4" text-anchor="middle" font-size="14">&#x1F4C8;</text><text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Dashboards</text></g>
+                        <g class="diverge-endpoint" transform="translate(680, 200)" opacity="0"><circle r="24" fill="#FDFCFA" stroke="#F59E0B" stroke-width="2"/><text y="4" text-anchor="middle" font-size="14">&#x2699;&#xFE0F;</text><text y="45" text-anchor="middle" font-size="9" fill="#525252" font-weight="500">Tools</text></g>
+                    </svg>
+                </div>
+                <p id="diverge-subtext" style="font-family: var(--font-serif); font-size: clamp(1.2rem, 2vw, 1.5rem); font-style: italic; color: var(--gray-600); max-width: 600px; opacity: 0;"><strong style="font-style: normal; display: block; margin-bottom: 0.5rem; color: var(--gray-800);">The thinking is still the value.</strong>Now it doesn't have to stop at the deck.</p>
+            </div>
+
+            <!-- BEAT 14 — Extend AND Expand -->
+            <div class="frame bg-warm" id="beat-14" role="group" aria-roledescription="slide" aria-label="Slide 14: Extend and Expand">
+                <p class="label">The structural shift</p>
+                <h2>From one moment<br>to <em>many.</em></h2>
+                <div class="journey-svg" style="margin: 3rem 0; height: 120px;">
+                    <svg viewBox="0 0 900 120" preserveAspectRatio="xMidYMid meet">
+                        <!-- Bracket labels -->
+                        <g id="extend-bracket-before" opacity="0">
+                            <line x1="50" y1="20" x2="279" y2="20" stroke="#4F46E5" stroke-width="1.5" opacity="0.5"/>
+                            <line x1="50" y1="14" x2="50" y2="26" stroke="#4F46E5" stroke-width="1.5" opacity="0.5"/>
+                            <line x1="279" y1="14" x2="279" y2="26" stroke="#4F46E5" stroke-width="1.5" opacity="0.5"/>
+                            <text x="164" y="10" text-anchor="middle" font-size="8" fill="#4F46E5" font-weight="600" font-family="Inter, sans-serif" letter-spacing="0.08em">BEFORE</text>
+                        </g>
+                        <g id="extend-bracket-new" opacity="0">
+                            <line x1="393" y1="20" x2="850" y2="20" stroke="#DC6843" stroke-width="1.5" opacity="0.5"/>
+                            <line x1="393" y1="14" x2="393" y2="26" stroke="#DC6843" stroke-width="1.5" opacity="0.5"/>
+                            <line x1="850" y1="14" x2="850" y2="26" stroke="#DC6843" stroke-width="1.5" opacity="0.5"/>
+                            <text x="621" y="10" text-anchor="middle" font-size="8" fill="#DC6843" font-weight="600" font-family="Inter, sans-serif" letter-spacing="0.08em">NOW POSSIBLE</text>
+                        </g>
+                        <!-- Base line -->
+                        <line x1="50" y1="55" x2="850" y2="55" stroke="#D4D4D4" stroke-width="2"/>
+                        <!-- Progress segments -->
+                        <line id="extend-progress-before" x1="50" y1="55" x2="279" y2="55" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/>
+                        <line id="extend-progress-new" x1="279" y1="55" x2="850" y2="55" stroke="url(#journeyGrad)" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Original focus dots (indigo) -->
+                        <circle cx="50" cy="55" r="6" fill="#4F46E5"/>
+                        <circle cx="164" cy="55" r="6" fill="#4F46E5"/>
+                        <circle cx="279" cy="55" r="6" fill="#4F46E5"/>
+                        <!-- Expanded dots (warm gradient) -->
+                        <circle cx="393" cy="55" r="6" fill="#7C6EE6"/>
+                        <circle cx="507" cy="55" r="6" fill="#A87ADB"/>
+                        <circle cx="621" cy="55" r="6" fill="#C46E5C"/>
+                        <circle cx="736" cy="55" r="6" fill="#D46A4F"/>
+                        <circle cx="850" cy="55" r="6" fill="#DC6843"/>
+                        <!-- Labels -->
+                        <text x="50" y="83" text-anchor="middle" font-size="9" fill="#4F46E5" font-family="Inter, sans-serif" font-weight="500">Kickoff</text>
+                        <text x="164" y="83" text-anchor="middle" font-size="9" fill="#4F46E5" font-family="Inter, sans-serif" font-weight="500">Strategy</text>
+                        <text x="279" y="83" text-anchor="middle" font-size="9" fill="#4F46E5" font-family="Inter, sans-serif" font-weight="500">Handoff</text>
+                        <text x="393" y="83" text-anchor="middle" font-size="9" fill="#DC6843" font-family="Inter, sans-serif" font-weight="500">Build</text>
+                        <text x="507" y="83" text-anchor="middle" font-size="9" fill="#DC6843" font-family="Inter, sans-serif" font-weight="500">Launch</text>
+                        <text x="621" y="83" text-anchor="middle" font-size="9" fill="#DC6843" font-family="Inter, sans-serif" font-weight="500">Measure</text>
+                        <text x="736" y="83" text-anchor="middle" font-size="9" fill="#DC6843" font-family="Inter, sans-serif" font-weight="500">Iterate</text>
+                        <text x="850" y="83" text-anchor="middle" font-size="9" fill="#DC6843" font-family="Inter, sans-serif" font-weight="500">Scale</text>
+                    </svg>
+                </div>
+                <p class="body-text" style="color: var(--gray-600); margin: 0 auto;">A deck touches one moment, one room.<br>Tools can live in more parts of the system.</p>
+            </div>
+
+            <!-- BEAT 16 — It Fits -->
+            <div class="frame bg-warm comp-left" id="beat-16" role="group" aria-roledescription="slide" aria-label="Slide 16: It Fits">
+                <h2>This isn't a pivot.<br>It's an <em>extension.</em></h2>
+                <p class="large-text" style="color: var(--gray-600); margin-top: 1.5rem;">The same thinking, the same hours —<br>just more forms for it to take.</p>
+            </div>
+
+            <!-- BEAT 17 — The Spectrum -->
+            <div class="frame bg-warm" id="beat-17" role="group" aria-roledescription="slide" aria-label="Slide 17: The Spectrum" style="padding-top: 4rem; padding-bottom: 4rem;">
+                <h3 style="color: var(--gray-800); margin-bottom: 2rem;">The spectrum of "beyond decks"</h3>
+                <div class="spectrum-container" id="spectrum-container">
+                    <div class="spectrum-track" id="spectrum-track">
+                        <div class="spectrum-item">
+                            <span class="step-number">1</span>
+                            <p class="time">Hours</p>
+                            <h4>Presented differently</h4>
+                            <p>Non-linear, explorable presentations.</p>
+                        </div>
+                        <div class="spectrum-item">
+                            <span class="step-number">2</span>
+                            <p class="time">A day</p>
+                            <h4>Calculators &amp; Scorecards</h4>
+                            <p>"Rate your brand maturity" tools.</p>
+                        </div>
+                        <div class="spectrum-item">
+                            <span class="step-number">3</span>
+                            <p class="time">A few days</p>
+                            <h4>Prototypes</h4>
+                            <p>Interactive concepts that bring a vision to life.</p>
+                        </div>
+                        <div class="spectrum-item">
+                            <span class="step-number">4</span>
+                            <p class="time">A week</p>
+                            <h4>Lightweight tools</h4>
+                            <p>Durable utility beyond the engagement.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEAT 18 — What This Looks Like -->
+            <div class="frame bg-dark" id="beat-18" role="group" aria-roledescription="slide" aria-label="Slide 18: What This Looks Like">
+                <h2>What this looks like.</h2>
+                <p class="large-text" style="color: var(--gray-400); margin-top: 1rem;">Five transformations.</p>
+            </div>
+
+            <!-- BEAT 19 — Pitch Deck → Prototype (Morph) -->
+            <div class="frame bg-dark" id="beat-19" role="group" aria-roledescription="slide" aria-label="Slide 19: Prototype">
+                <div class="morph-bg" data-morph-bg style="background-image: url('images/prototype.png');"></div>
+                <p class="label" style="color: var(--accent);">Client Delivery</p>
+                <div class="morph-container" id="morph-19">
+                    <div class="morph-card morph-before">
+                        <p class="morph-type">BEFORE</p>
+                        <h3>A pitch deck</h3>
+                        <p class="morph-desc">Presented once. Filed away.</p>
+                    </div>
+                    <div class="morph-card morph-after">
+                        <p class="morph-type">AFTER</p>
+                        <h3>A working prototype</h3>
+                        <p class="morph-desc">Interactive, testable, and evolving with&nbsp;feedback.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEAT 20 — Positioning → Simulation Arena (Morph) -->
+            <div class="frame bg-dark" id="beat-20" role="group" aria-roledescription="slide" aria-label="Slide 20: Simulation Arena">
+                <div class="morph-bg" data-morph-bg style="background-image: url('images/arena.png');"></div>
+                <p class="label" style="color: var(--accent);">Brand / Positioning</p>
+                <div class="morph-container" id="morph-20">
+                    <div class="morph-card morph-before">
+                        <p class="morph-type">BEFORE</p>
+                        <h3>A positioning exercise</h3>
+                        <p class="morph-desc">A static snapshot of the competitive landscape.</p>
+                    </div>
+                    <div class="morph-card morph-after">
+                        <p class="morph-type">AFTER</p>
+                        <h3>A simulation arena</h3>
+                        <p class="morph-desc">Test positioning moves before you make&nbsp;them.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEAT 21 — Briefs Training → Brief Analysis (Morph) -->
+            <div class="frame bg-dark" id="beat-21" role="group" aria-roledescription="slide" aria-label="Slide 21: Brief Analysis">
+                <div class="morph-bg" data-morph-bg style="background-image: url('images/brief analysis.png');"></div>
+                <p class="label" style="color: var(--accent);">Training / Enablement</p>
+                <div class="morph-container" id="morph-21">
+                    <div class="morph-card morph-before">
+                        <p class="morph-type">BEFORE</p>
+                        <h3>A better briefs training</h3>
+                        <p class="morph-desc">Watched once. Forgotten by Friday.</p>
+                    </div>
+                    <div class="morph-card morph-after">
+                        <p class="morph-type">AFTER</p>
+                        <h3>A brief analysis tool</h3>
+                        <p class="morph-desc">Paste a brief, get instant feedback. Learning by&nbsp;doing.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEAT 22 — Prompt Best Practices → Prompt Enhancer (Morph) -->
+            <div class="frame bg-dark" id="beat-22" role="group" aria-roledescription="slide" aria-label="Slide 22: Prompt Enhancer">
+                <div class="morph-bg" data-morph-bg style="background-image: url('images/prompt enhancer tool.png');"></div>
+                <p class="label" style="color: var(--accent);">AI / Productivity</p>
+                <div class="morph-container" id="morph-22">
+                    <div class="morph-card morph-before">
+                        <p class="morph-type">BEFORE</p>
+                        <h3>AI prompt best practices</h3>
+                        <p class="morph-desc">A guide nobody bookmarks.</p>
+                    </div>
+                    <div class="morph-card morph-after">
+                        <p class="morph-type">AFTER</p>
+                        <h3>A prompt enhancer experience</h3>
+                        <p class="morph-desc">Write a prompt, watch it get better. The best practice is&nbsp;built&nbsp;in.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEAT 22b — Research (Morph) -->
+            <div class="frame bg-dark" id="beat-22b" role="group" aria-roledescription="slide" aria-label="Slide 23: Research">
+                <div class="morph-bg" data-morph-bg style="background-image: url('images/research.png');"></div>
+                <p class="label" style="color: var(--accent);">Research / Internal</p>
+                <div class="morph-container" id="morph-22b">
+                    <div class="morph-card morph-before">
+                        <p class="morph-type">BEFORE</p>
+                        <h3>Research starts from scratch</h3>
+                        <p class="morph-desc">Every engagement reinvents the wheel.</p>
+                    </div>
+                    <div class="morph-card morph-after">
+                        <p class="morph-type">AFTER</p>
+                        <h3>Research is already done</h3>
+                        <p class="morph-desc">Searchable, organized, and compounding<br>across&nbsp;engagements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEAT 23 — THIS is What It Means -->
+            <div class="frame bg-dark-accent" id="beat-23" role="group" aria-roledescription="slide" aria-label="Slide 23: This Is What It Means">
+                <p class="quote-text" style="border-left: 3px solid var(--accent); padding-left: 2rem; text-align: left; background: rgba(79, 70, 229, 0.08); padding: 1rem 2rem; border-radius: 0 8px 8px 0;">"Win on relationships. Be trusted partners."</p>
+                <h2 class="statement statement-xl" style="margin-top: 2rem;"><em class="gradient-text">This</em> is what that means.</h2>
+            </div>
+
+            <!-- BEAT 24 — Being Indispensable -->
+            <div class="frame bg-dark" id="beat-24" role="group" aria-roledescription="slide" aria-label="Slide 24: Being Indispensable">
+                <h2 class="statement statement-xl">Not schmoozing.<br><strong style="color: var(--white);">Building what lasts.</strong></h2>
+                <p class="large-text" style="color: var(--gray-400); margin-top: 1.5rem;">Thinking that doesn't stop<br>when the meeting ends.</p>
+            </div>
+
+            <!-- BEAT 25 — True Partners -->
+            <div class="frame bg-dark-subtle atmo-bg" id="beat-25" role="group" aria-roledescription="slide" aria-label="Slide 25: True Partners" style="background-image: linear-gradient(rgba(10,10,10,0.55), rgba(10,10,10,0.65)), url('images/atmo-partners.png');">
+                <h2 class="statement statement-xl">Not consultants who hand off and leave.<br><strong style="color: var(--white);">Partners whose thinking stays in the room.</strong></h2>
+            </div>
+
+            <!-- BEAT 26 — Start Small -->
+            <div class="frame bg-cream" id="beat-26" role="group" aria-roledescription="slide" aria-label="Slide 26: Start Now">
+                <h2 style="margin-bottom: 2rem;">Start now.</h2>
+                <p class="large-text" style="color: var(--gray-600); margin-bottom: 2rem;">Spend an hour with the tools.<br>Build something small. See what's&nbsp;possible.</p>
+                <div class="tools">
+                    <a href="https://lovable.dev" target="_blank" rel="noopener" class="tool">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        Lovable
+                    </a>
+                    <a href="https://replit.com" target="_blank" rel="noopener" class="tool">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M2 6a2 2 0 012-2h5v4H4v12h16V8h-5V4h5a2 2 0 012 2v14a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/><path d="M9 4v4h6V4H9z"/><circle cx="12" cy="14" r="2"/></svg>
+                        Replit
+                    </a>
+                    <a href="https://claude.ai" target="_blank" rel="noopener" class="tool">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z"/></svg>
+                        Claude
+                    </a>
+                    <a href="https://cursor.com" target="_blank" rel="noopener" class="tool">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4l7.07 17 2.51-7.39L21 11.1 4 4z"/></svg>
+                        Cursor
+                    </a>
+                    <a href="https://v0.dev" target="_blank" rel="noopener" class="tool">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="12,2 2,22 12,17 22,22"/></svg>
+                        v0
+                    </a>
+                </div>
+            </div>
+
+            <!-- BEAT 27 — Ask the Question -->
+            <div class="frame bg-dark-warm" id="beat-27" role="group" aria-roledescription="slide" aria-label="Slide 27: Ask the Question">
+                <h2 class="statement statement-xl">On every engagement:<br><em style="color: var(--accent-warm);">"Could this be more<br>than a&nbsp;deck?"</em></h2>
+            </div>
+
+            <!-- BEAT 29 — Become the Partner -->
+            <div class="frame bg-dark-deep comp-full-bleed" id="beat-29" role="group" aria-roledescription="slide" aria-label="Slide 27: Become the Partner">
+                <h2 class="statement statement-xxl" id="final-statement">The ones who extend what's possible<br>become impossible to replace.</h2>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="frame-counter" id="frame-counter">1 / 27</div>
+
+    <div class="nav-hint" id="nav-hint">
+        <span class="nav-hint-label">Next</span>
+        <div class="nav-hint-circle">
+            <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </div>
+    </div>
+
+    <div id="slide-announcer" class="sr-only" aria-live="polite"></div>
+
+    <script>
+        // ==========================================
+        // GSAP SETUP
+        // ==========================================
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText, DrawSVGPlugin);
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) {
+            gsap.globalTimeline.timeScale(100);
+        }
+
+        // ==========================================
+        // FRAME MAP
+        // ==========================================
+        // 27 frames, indices 0-26:
+        // 0:Beat0  1:Beat1  2:Beat2  3:Beat3  4:Beat4  5:Beat5
+        // 6:Beat6  7:Beat8  8:Beat9  9:Beat10  10:Beat11  11:Beat12
+        // 12:Beat13  13:Beat14  14:Beat16  15:Beat17  16:Beat18
+        // 17:Beat19  18:Beat20  19:Beat21  20:Beat22  21:Beat23
+        // 22:Beat24  23:Beat25  24:Beat26  25:Beat27  26:Beat29
+
+        const strip = document.getElementById('cinema-strip');
+        const allFrames = Array.from(strip.querySelectorAll('.frame'));
+        const TOTAL = allFrames.length;
+        const counterEl = document.getElementById('frame-counter');
+        const navHint = document.getElementById('nav-hint');
+        const announcer = document.getElementById('slide-announcer');
+
+        let current = 0;
+        let animating = false;
+
+        // ==========================================
+        // TRANSITION SPEEDS
+        // ==========================================
+        const SPEEDS = {
+            standard: { duration: 0.8, ease: 'expo.inOut' },
+            slow:     { duration: 1.2, ease: 'power2.inOut' },
+            quick:    { duration: 0.3, ease: 'power3.out' }
+        };
+
+        const TRANSITION_MAP = new Map();
+        // Quick cuts within evidence
+        TRANSITION_MAP.set('7-8', 'quick');   // beat 8 → beat 9
+        TRANSITION_MAP.set('8-9', 'quick');   // beat 9 → beat 10
+        // Slow pans in payoff
+        TRANSITION_MAP.set('22-23', 'slow');  // beat 23 → beat 24
+        TRANSITION_MAP.set('23-24', 'slow');  // beat 24 → beat 25
+
+        function getSpeed(from, to) {
+            return TRANSITION_MAP.get(`${from}-${to}`) || 'standard';
+        }
+
+        // ==========================================
+        // FRAME ANIMATION REGISTRY
+        // ==========================================
+        const onEnterMap = new Map();
+        const entered = new Set();
+
+        function registerFrame(index, cb) {
+            onEnterMap.set(index, cb);
+        }
+
+        function enterFrame(index) {
+            if (entered.has(index)) return;
+            entered.add(index);
+
+            const cb = onEnterMap.get(index);
+            if (cb) cb();
+        }
+
+        // ==========================================
+        // NAVIGATION
+        // ==========================================
+        function panTo(index, speed) {
+            if (index < 0 || index >= TOTAL) return;
+
+            const cfg = SPEEDS[speed || 'standard'];
+            const targetX = Math.round(-index * window.innerWidth);
+
+            animating = true;
+
+            gsap.to(strip, {
+                x: targetX,
+                duration: cfg.duration,
+                ease: cfg.ease,
+                overwrite: true,
+                force3D: true,
+                onComplete: () => {
+                    current = index;
+                    animating = false;
+                    updateUI();
+                    // Delay entry animations to next paint so they don't compete with pan
+                    requestAnimationFrame(() => enterFrame(index));
+                }
+            });
+        }
+
+        function navigate(dir) {
+            if (animating) return;
+
+            const next = current + dir;
+            if (next < 0 || next >= TOTAL) return;
+
+            // Diverge sub-navigation (Beat 13 = frame 12)
+            if (dir === 1 && current === 12 && !allDivergeFormsRevealed()) {
+                revealNextDivergeForm();
+                return;
+            }
+
+            panTo(next, getSpeed(current, next));
+        }
+
+        // ==========================================
+        // UI
+        // ==========================================
+        function updateUI() {
+            counterEl.textContent = `${current + 1} / ${TOTAL}`;
+
+            if (current >= TOTAL - 1) {
+                navHint.classList.add('hidden');
+            } else {
+                navHint.classList.remove('hidden');
+            }
+
+            navHint.querySelector('.nav-hint-label').textContent = current === 0 ? 'Begin' : 'Next';
+
+            const frame = allFrames[current];
+            const isLight = frame.classList.contains('bg-cream') || frame.classList.contains('bg-warm');
+            navHint.classList.toggle('on-light', isLight);
+
+            announcer.textContent = frame.getAttribute('aria-label') || `Slide ${current + 1}`;
+        }
+
+        // ==========================================
+        // INPUT HANDLERS
+        // ==========================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                navigate(1);
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                navigate(-1);
+            }
+            if (e.key === 'Home') { e.preventDefault(); if (!animating) panTo(0, 'standard'); }
+            if (e.key === 'End') { e.preventDefault(); if (!animating) panTo(TOTAL - 1, 'standard'); }
+        });
+
+        let touchStartX = 0, touchStartY = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                navigate(dx < 0 ? 1 : -1);
+            }
+        }, { passive: true });
+
+        navHint.addEventListener('click', () => navigate(1));
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                gsap.set(strip, { x: Math.round(-current * window.innerWidth) });
+            }, 100);
+        });
+
+        // ==========================================
+        // INIT
+        // ==========================================
+        gsap.set(strip, { x: 0 });
+        updateUI();
+        setTimeout(() => navHint.classList.add('visible'), 2000);
+
+        // ==========================================
+        // INITIAL STATE: Hide elements for reveal animations
+        // GSAP manages all visibility — elements hidden here
+        // get revealed by their frame's animation callback
+        // ==========================================
+        gsap.set('.hero-title', { opacity: 0 });
+
+        allFrames.forEach((frame, i) => {
+            if (i === 0) return;
+            const textEls = frame.querySelectorAll('.label, .large-text, .body-text, .quote-text, h2, h3, .statement');
+            gsap.set(textEls, { opacity: 0, y: 30 });
+        });
+
+        gsap.set('.shift-before', { opacity: 0, x: -30 });
+        gsap.set('.shift-now', { opacity: 0, x: 30 });
+        gsap.set('.shift-center', { opacity: 0, scale: 0.8 });
+        gsap.set('.pattern-quote', { opacity: 0, x: -20 });
+        gsap.set('.stat-full', { opacity: 0, y: 30 });
+        gsap.set('.spectrum-item', { opacity: 0, y: 30 });
+        gsap.set('.deck-word', { opacity: 0, y: 10 });
+        gsap.set('.morph-before', { opacity: 0, y: 20 });
+
+        // ==========================================
+        // ANIMATION: Shared fade-up helper
+        // ==========================================
+        function animateIn(frameEl) {
+            const els = frameEl.querySelectorAll('.label, .large-text, .body-text, .quote-text:not(#quote-text), h2:not(.hero-title):not(#question-text):not(#paradox-text):not(#final-statement):not(.statement), h3');
+            gsap.to(els, { opacity: 1, y: 0, duration: 0.8, stagger: 0.08, ease: "expo.out" });
+
+            const statements = frameEl.querySelectorAll('.statement:not(#paradox-text):not(#final-statement)');
+            gsap.to(statements, { opacity: 1, y: 0, duration: 1, stagger: 0.12, ease: "expo.out" });
+        }
+
+        // ==========================================
+        // ANIMATION: Per-frame registrations
+        // ==========================================
+
+        // Beat 0 (frame 0) — Hero
+        registerFrame(0, () => {
+            gsap.set('.hero-title', { opacity: 1 });
+            SplitText.create(".hero-title", {
+                type: "chars", mask: "chars", autoSplit: true,
+                onSplit(self) {
+                    return gsap.from(self.chars, {
+                        yPercent: 100, opacity: 0, duration: 0.7,
+                        stagger: 0.03, ease: "expo.out", delay: 0.3
+                    });
+                }
+            });
+        });
+
+        // Beat 1 (frame 1) — Quote + question
+        registerFrame(1, () => {
+            gsap.set('#quote-text', { opacity: 1, y: 0 });
+            gsap.set('#question-text', { opacity: 1, y: 0 });
+            SplitText.create("#quote-text", {
+                type: "lines", mask: "lines", autoSplit: true,
+                onSplit(self) {
+                    return gsap.from(self.lines, {
+                        yPercent: 100, duration: 0.8, ease: "power3.out", stagger: 0.12
+                    });
+                }
+            });
+            SplitText.create("#question-text", {
+                type: "lines", mask: "lines", autoSplit: true,
+                onSplit(self) {
+                    return gsap.from(self.lines, {
+                        yPercent: 100, duration: 0.8, ease: "power3.out",
+                        stagger: 0.12, delay: 0.4
+                    });
+                }
+            });
+            setTimeout(() => {
+                const u = document.querySelector('.accent-underline');
+                if (u) u.classList.add('visible');
+            }, 800);
+        });
+
+        // Beat 2 (frame 2) — Journey DrawSVG
+        gsap.set("#journey-progress", { drawSVG: "0%" });
+        gsap.set(".j-dot", { scale: 0, transformOrigin: "center" });
+        gsap.set("#journey-marker", { opacity: 0, y: 10 });
+        registerFrame(2, () => {
+            animateIn(allFrames[2]);
+            const tl = gsap.timeline();
+            tl.to("#journey-progress", { drawSVG: "100%", duration: 1.5, ease: "power2.inOut" })
+              .to(".j-dot", { scale: 1, duration: 0.3, stagger: 0.15, ease: "back.out(2)" }, 0.2)
+              .to("#journey-marker", { opacity: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, 1);
+        });
+
+        // Beat 3 (frame 3) — Deck cards
+        const deckCards = document.querySelectorAll('.deck-card');
+        gsap.set(deckCards[0], { z: 0, rotation: -2 });
+        gsap.set(deckCards[1], { z: 15, rotation: 1 });
+        gsap.set(deckCards[2], { z: 30, rotation: -1 });
+        registerFrame(3, () => {
+            animateIn(allFrames[3]);
+            gsap.to(deckCards[0], { x: -100, z: -20, rotationY: 15, rotation: -8, opacity: 0.4, duration: 1.2, ease: "expo.out" });
+            gsap.to(deckCards[1], { z: 30, rotationX: -5, rotation: 0, duration: 1.2, ease: "expo.out" });
+            gsap.to(deckCards[2], { x: 100, z: -20, rotationY: -15, rotation: 8, opacity: 0.4, duration: 1.2, ease: "expo.out" });
+            gsap.to('.deck-word', { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: "expo.out", delay: 0.3 });
+        });
+
+        // Beat 5 (frame 5) — Paradox
+        registerFrame(5, () => {
+            gsap.set('#paradox-text', { opacity: 1, y: 0 });
+            SplitText.create("#paradox-text", {
+                type: "lines", mask: "lines", autoSplit: true,
+                onSplit(self) {
+                    return gsap.from(self.lines, {
+                        yPercent: 100, duration: 0.9, ease: "power3.out", stagger: 0.15
+                    });
+                }
+            });
+        });
+
+        // Beat 6 (frame 6) — Word pairs
+        gsap.set(".wp-header", { opacity: 0 });
+        gsap.set(".wp-left", { opacity: 0, y: 10 });
+        gsap.set(".wp-arrow", { opacity: 0 });
+        gsap.set(".wp-right", { opacity: 0, x: 10 });
+        registerFrame(6, () => {
+            animateIn(allFrames[6]);
+            const tl = gsap.timeline();
+            tl.to(".wp-header", { opacity: 1, duration: 0.5, ease: "power2.out" })
+              .to(".wp-left", { opacity: 1, y: 0, duration: 0.6, ease: "expo.out", stagger: 0.15 }, 0.2)
+              .to(".wp-arrow", { opacity: 1, duration: 0.4, stagger: 0.15 }, 0.4)
+              .to(".wp-right", { opacity: 1, x: 0, duration: 0.6, ease: "expo.out", stagger: 0.15 }, 0.6);
+        });
+
+        // Beat 8 (frame 7) — Shift comparison
+        registerFrame(7, () => {
+            animateIn(allFrames[7]);
+            gsap.to('.shift-before', { opacity: 1, x: 0, duration: 0.8, ease: "expo.out" });
+            gsap.to('.shift-now', { opacity: 1, x: 0, duration: 0.8, delay: 0.2, ease: "expo.out" });
+            gsap.to('.shift-center', { opacity: 1, scale: 1, duration: 0.5, delay: 0.4, ease: "back.out(2)" });
+        });
+
+        // Beat 9 (frame 8) — Pattern quotes
+        registerFrame(8, () => {
+            animateIn(allFrames[8]);
+            const pqs = allFrames[8].querySelectorAll('.pattern-quote');
+            gsap.to(pqs, { opacity: 1, x: 0, duration: 0.6, stagger: 0.2, ease: "expo.out", delay: 0.3 });
+        });
+
+        // Beat 10 (frame 9) — Counter animations
+        registerFrame(9, () => {
+            animateIn(allFrames[9]);
+            const stats = allFrames[9].querySelectorAll('.stat-full');
+            stats.forEach((stat, i) => {
+                const counter = stat.querySelector('.counter');
+                const target = parseInt(stat.dataset.target);
+                gsap.to(stat, {
+                    opacity: 1, y: 0, duration: 0.8, delay: i * 0.6, ease: "expo.out",
+                    onStart: () => {
+                        gsap.to({ val: 0 }, {
+                            val: target, duration: 1.5, delay: 0.2, ease: "power2.out",
+                            onUpdate() { counter.textContent = Math.round(this.targets()[0].val); }
+                        });
+                    }
+                });
+            });
+        });
+
+        // Beat 12 (frame 11) — Value curve
+        gsap.set("#curve-deck", { drawSVG: "0%" });
+        gsap.set("#curve-building", { drawSVG: "0%" });
+        registerFrame(11, () => {
+            animateIn(allFrames[11]);
+            const tl = gsap.timeline();
+            tl.to("#curve-deck", { drawSVG: "100%", duration: 1.2, ease: "power2.inOut" })
+              .to("#curve-building", { drawSVG: "100%", duration: 1.2, ease: "power2.inOut" }, "-=0.8")
+              .to("#curve-intersect", { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, "-=0.4")
+              .to("#curve-now", { opacity: 1, duration: 0.3 }, "-=0.2")
+              .to("#curve-label-deck", { opacity: 1, duration: 0.4 }, "-=0.1")
+              .to("#curve-label-building", { opacity: 1, duration: 0.4 }, "-=0.3");
+        });
+
+        // Beat 13 (frame 12) — Diverge
+        const divergeVisual = document.getElementById('diverge-visual');
+        const divergeLines = Array.from(divergeVisual.querySelectorAll('.diverge-line'));
+        const divergeOrigin = divergeVisual.querySelector('.diverge-origin');
+        const divergeOriginLabel = divergeVisual.querySelector('.diverge-origin-label');
+        const divergeEndpoints = Array.from(divergeVisual.querySelectorAll('.diverge-endpoint'));
+        const divergeSubtext = document.getElementById('diverge-subtext');
+        let divergeFormIndex = -1;
+
+        divergeLines.forEach(line => gsap.set(line, { drawSVG: "0%" }));
+
+        function revealNextDivergeForm() {
+            if (divergeFormIndex < divergeLines.length - 1) {
+                divergeFormIndex++;
+                gsap.to(divergeLines[divergeFormIndex], { drawSVG: "100%", duration: 0.8, ease: "power2.inOut" });
+                gsap.to(divergeEndpoints[divergeFormIndex], { opacity: 1, duration: 0.4, delay: 0.5, ease: "back.out(2)" });
+                if (divergeFormIndex === divergeLines.length - 1 && divergeSubtext) {
+                    gsap.to(divergeSubtext, { opacity: 1, y: 0, duration: 0.6, delay: 1, ease: "power2.out" });
+                }
+                return true;
+            }
+            return false;
+        }
+        function allDivergeFormsRevealed() {
+            return divergeFormIndex >= divergeLines.length - 1;
+        }
+
+        registerFrame(12, () => {
+            animateIn(allFrames[12]);
+            gsap.to(divergeOrigin, { opacity: 1, duration: 0.4 });
+            gsap.to(divergeOriginLabel, { opacity: 1, duration: 0.4, delay: 0.1 });
+        });
+
+        // Beat 14 (frame 13) — Extend journey
+        gsap.set("#extend-progress-new", { drawSVG: "0%" });
+        registerFrame(13, () => {
+            animateIn(allFrames[13]);
+            const tl = gsap.timeline();
+            tl.to("#extend-bracket-before", { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.3)
+              .to("#extend-progress-new", { drawSVG: "100%", duration: 1.2, ease: "power2.inOut" }, 0.6)
+              .to("#extend-bracket-new", { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.2);
+        });
+
+        // Beat 17 (frame 15) — Spectrum
+        registerFrame(15, () => {
+            animateIn(allFrames[15]);
+            const items = allFrames[15].querySelectorAll('.spectrum-item');
+            gsap.to(items, { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: "expo.out", delay: 0.3 });
+        });
+
+        // Beats 19-22b (frames 17-21) — Morph
+        [
+            { id: 'morph-19', f: 17 },
+            { id: 'morph-20', f: 18 },
+            { id: 'morph-21', f: 19 },
+            { id: 'morph-22', f: 20 },
+            { id: 'morph-22b', f: 21 }
+        ].forEach(({ id, f }) => {
+            const c = document.getElementById(id);
+            if (!c) return;
+            const before = c.querySelector('.morph-before');
+            const after = c.querySelector('.morph-after');
+            const bg = allFrames[f].querySelector('[data-morph-bg]');
+            gsap.set(after, { opacity: 0 });
+
+            registerFrame(f, () => {
+                animateIn(allFrames[f]);
+                const tl = gsap.timeline();
+                tl.to(before, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" })
+                  .to(before, { borderColor: "rgba(79, 70, 229, 0.3)", background: "rgba(79, 70, 229, 0.05)", duration: 0.4, delay: 0.8 })
+                  .to(before, { opacity: 0, scale: 0.98, duration: 0.5, ease: "power2.inOut" })
+                  .to(bg, { opacity: 1, duration: 0.8, ease: "power2.inOut" }, "-=0.5")
+                  .to(after, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, "-=0.5")
+                  .call(() => after.classList.add('alive'));
+            });
+        });
+
+        // Beat 29 (frame 27) — Final statement
+        registerFrame(27, () => {
+            gsap.set('#final-statement', { opacity: 1, y: 0 });
+            SplitText.create("#final-statement", {
+                type: "lines", mask: "lines", autoSplit: true,
+                onSplit(self) {
+                    return gsap.from(self.lines, {
+                        yPercent: 100, duration: 1, ease: "power3.out", stagger: 0.15
+                    });
+                }
+            });
+        });
+
+        // Register generic fade-up for remaining frames
+        const customFrames = new Set([0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 15, 17, 18, 19, 20, 21, 27]);
+        allFrames.forEach((frame, i) => {
+            if (customFrames.has(i)) return;
+            registerFrame(i, () => animateIn(frame));
+        });
+
+        // Trigger frame 0 on load
+        setTimeout(() => enterFrame(0), 300);
+    </script>
+</body>
+</html>

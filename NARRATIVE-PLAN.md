@@ -6,7 +6,7 @@
 
 We're told to "win on relationships" and be "trusted partners, not just vendors." But what does that actually mean?
 
-We sell **transformation**—business transformation, marketing transformation, brand transformation. Transformation is a **journey** that unfolds over months and years. But it's also a **system**—stakeholders with different incentives, hundreds of decisions, feedback loops, behaviors that need to change. To torque a company toward a new direction requires sustained force across the whole system.
+We sell **transformation**—business transformation, marketing transformation, brand transformation. Transformation is a **journey** that unfolds over months and years. But it's also a **system**—stakeholders with different incentives, hundreds of decisions, feedback loops, behaviors that need to change. To shift a company toward a new direction requires sustained force across the whole system.
 
 Our thinking is the catalyst. But we've been packaging it into **decks**—a format that captures one moment, one format, one way of engaging.
 
@@ -54,11 +54,11 @@ Not all "beyond decks" is the same. There's a spectrum—from slightly beyond to
 
 | | Lighter | → | → | Heavier |
 |---|---------|---|---|---------|
-| **What it is** | A deck presented differently | A calculator or scorecard | A prototype that brings a concept to life | A lightweight tool that lives beyond the engagement |
-| **Example** | Non-linear, explorable presentation | "Rate your brand maturity" scorecard | Interactive positioning landscape | GTM dashboard template |
+| **What it is** | A deck presented differently | A calculator or scorecard | A prototype that brings a concept to life | A tool that lives beyond the engagement |
+| **Example** | Non-linear, explorable presentation | "Rate your brand maturity" scorecard | Interactive positioning landscape | GTM dashboard, internal platform |
 | **Client value** | More engaging | Applied thinking they can use | Tangible vision they can react to | Durable utility |
 | **Internal value** | New presentation muscle | Reusable across clients | Learnings about what resonates | Proprietary asset |
-| **Build time** | Hours | A day | A few days | A week |
+| **Build time** | Hours | A day | A few days | And growing |
 
 All lightweight. All learnable. All compounding.
 
@@ -66,7 +66,7 @@ All lightweight. All learnable. All compounding.
 
 ---
 
-## The 27-Beat Structure
+## The 29-Beat Structure
 
 ### THE HOOK (2 beats)
 
@@ -88,12 +88,11 @@ All lightweight. All learnable. All compounding.
 
 ---
 
-### THE BRIDGE (2 beats)
+### THE BRIDGE (1 beat)
 
 | # | Beat | Core Message |
 |---|------|--------------|
-| 6 | **The Constraint** | It's not commitment. It's not capability. A deck can launch the journey—it's harder for it to stay on it. |
-| 7 | **The Rational Choice** | Decks were the highest-leverage format available—and for good reason. But they were also the only format the economics supported. Building things that could travel with clients required developers, budgets, months. |
+| 6 | **Why We Leave** | Our thinking ends where the deck ends. Not because we chose to stop—but because building anything more meant different talent, different timelines, different economics. So our thinking stayed locked in a passive format, its value depending on someone else to act on it. |
 
 ---
 
@@ -116,13 +115,15 @@ All lightweight. All learnable. All compounding.
 
 ---
 
-### THE PROVOCATION (3 beats)
+### THE PROVOCATION (5 beats)
 
 | # | Beat | Core Message |
 |---|------|--------------|
 | 13 | **A New Model** | What if our thinking could take more forms than a deck? Our thinking is still the value. It always will be. Now it can take more forms. |
-| 14 | **Not Enterprise Software** | Lightweight tools. High-leverage builds. Things you can make in a day that last beyond the meeting. This fits into how we already work—not beside it. |
-| 15 | **The Spectrum** | From decks presented differently → calculators and scorecards → prototypes → lightweight tools. All learnable. All compounding. |
+| 14 | **Extend AND Expand** | Our thinking doesn't just go deeper—it goes wider. A deck touches one moment, one room. Tools can live in more parts of the system—different teams, different stages, different decisions. More surface area means more sustained force on the transformation. |
+| 15 | **The Compounding Effect** | It's not just value now—it's value that compounds. Decks get filed. Tools get reused, refined, built upon. Every build makes the next one faster. Every project makes the next one better. This is what productizing actually looks like. And unlike a deck, a tool gives you signal—you can see if people use it, where they engage, what they come back to. Your thinking gets a feedback loop. |
+| 16 | **It Fits How We Already Work** | This isn't a pivot. It's an extension. The same thinking, the same hours—just more forms for it to take. And as the tools keep getting better, what's possible keeps expanding. |
+| 17 | **The Spectrum** | From decks presented differently → calculators and scorecards → prototypes → tools that keep working. This is where to start—not where it stops. All learnable. All compounding. |
 
 ---
 
@@ -130,10 +131,10 @@ All lightweight. All learnable. All compounding.
 
 | # | Beat | Core Message |
 |---|------|--------------|
-| 16 | **What This Looks Like** | Three examples. Three transformations. |
-| 17 | **Positioning** | A deck gets presented and filed. A landscape gets *inhabited*. |
-| 18 | **Journey** | A map is a snapshot of something that never stops moving. An explorer moves with it. |
-| 19 | **GTM** | A playbook tells you what to do. A dashboard helps you decide what to do *now*. |
+| 18 | **What This Looks Like** | Three examples. Three transformations. |
+| 19 | **Positioning** | A deck gets presented once and filed. A landscape gets revisited—when a competitor moves, when a new opportunity emerges, when the team needs to make a call. |
+| 20 | **Journey** | A map is a snapshot of something that never stops moving. An explorer moves with it. |
+| 21 | **GTM** | A playbook tells you what to do. A dashboard helps you decide what to do *now*. |
 
 ---
 
@@ -141,9 +142,9 @@ All lightweight. All learnable. All compounding.
 
 | # | Beat | Core Message |
 |---|------|--------------|
-| 20 | **THIS is What It Means** | Callback to Beat 1. This is what winning on relationships actually means. |
-| 21 | **Being Indispensable** | Not schmoozing. Extending what's possible. Thinking that doesn't stop when the meeting ends. |
-| 22 | **True Partners** | Not consultants who hand off and leave. Partners whose thinking stays in the room. |
+| 22 | **THIS is What It Means** | Callback to Beat 1. This is what winning on relationships actually means. |
+| 23 | **Being Indispensable** | Not schmoozing. Extending what's possible. Thinking that doesn't stop when the meeting ends. |
+| 24 | **True Partners** | Not consultants who hand off and leave. Partners whose thinking stays in the room. |
 
 ---
 
@@ -151,10 +152,10 @@ All lightweight. All learnable. All compounding.
 
 | # | Beat | Core Message |
 |---|------|--------------|
-| 23 | **Start Small** | Spend an hour with the tools. Build something. See what's possible. |
-| 24 | **Ask the Question** | On every engagement: "Could this be more than a deck?" |
-| 25 | **Compound Your Advantage** | Every build teaches you. Every tool can be reused. The learning compounds. |
-| 26 | **Become the Partner** | The ones who extend what's possible become impossible to replace. |
+| 25 | **Start Small** | Spend an hour with the tools. Build something. See what's possible. |
+| 26 | **Ask the Question** | On every engagement: "Could this be more than a deck?" |
+| 27 | **Compound Your Advantage** | Every build teaches you. Every tool can be reused. The learning compounds. |
+| 28 | **Become the Partner** | The ones who extend what's possible become impossible to replace. |
 
 ---
 
@@ -165,19 +166,19 @@ THE HOOK (0-1): What does "indispensable" actually mean?
      ↓
 THE TENSION (2-5): We sell journeys, deliver moments, then leave
      ↓
-THE BRIDGE (6-7): Decks were rational—but they were also all we could afford to make
+THE BRIDGE (6): Decks were rational—but they were also all we could afford to make
      ↓
 THE SHIFT (8-10): Building is cheap now, you can do this, we've seen this before
      ↓
 THE PRESSURE (11-12): Career opportunity + firm risk
      ↓
-THE PROVOCATION (13-15): What if our thinking took more forms?
+THE PROVOCATION (13-17): What if our thinking took more forms? + Extend AND expand
      ↓
-THE PROOF (16-19): Here's what it looks like
+THE PROOF (18-21): Here's what it looks like
      ↓
-THE PAYOFF (20-22): THIS is what winning on relationships means
+THE PAYOFF (22-24): THIS is what winning on relationships means
      ↓
-THE INVITATION (23-26): Start now, compound your advantage
+THE INVITATION (25-28): Start now, compound your advantage
 ```
 
 ---
@@ -213,6 +214,15 @@ THE INVITATION (23-26): Start now, compound your advantage
 - "Decks were the highest-leverage format available—and for good reason"
 - "Our thinking is still the value. Now it can take more forms."
 - "This fits into how we already work—not beside it"
+
+### On the Structural Shift
+- "A deck touches one moment, one room. Tools can live in more parts of the system."
+- "More surface area means more sustained force on the transformation."
+- "Extend our value, expand our reach."
+- "It's not just value now—it's value that compounds."
+- "Decks get filed. Tools get reused, refined, built upon."
+- "Every build makes the next one faster. Every project makes the next one better."
+- "This is what productizing actually looks like."
 
 ### On the Shift
 - "The barrier isn't skill—it's imagination"
@@ -337,19 +347,19 @@ A new tool blurs a professional boundary. Early movers gain leverage. That lever
 ## Implementation Notes
 
 ### Presentation Timing
-- 27 beats ≈ 45-50 minutes of presentation
+- 29 beats ≈ 45-50 minutes of presentation
 - 10-15 minutes for examples/demos
-- Consider live demos or detailed walkthroughs for beats 16-19
+- Consider live demos or detailed walkthroughs for beats 18-21
 
 ### Key Visual Moments
 
-1. **The Spectrum (Beat 15)** — Show the four degrees of beyond decks as a visual progression with time/value dimensions
+1. **The Spectrum (Beat 17)** — Show the four degrees of beyond decks as a visual progression with time/value dimensions
 
 2. **Historical Parallel (Beat 10)** — 1985 designers / 2025 strategists side-by-side
 
-3. **The Examples (Beats 17-19)** — Before/after transformations (deck → tool)
+3. **The Examples (Beats 19-21)** — Before/after transformations (deck → tool)
 
-4. **The Payoff Callback (Beat 20)** — Visual echo of Beat 1
+4. **The Payoff Callback (Beat 22)** — Visual echo of Beat 1
 
 ### Tone Calibration
 
@@ -365,11 +375,11 @@ A new tool blurs a professional boundary. Early movers gain leverage. That lever
 |---------|-------|---------------|
 | THE HOOK | 0-1 | Intrigue |
 | THE TENSION | 2-5 | Recognition → Frustration |
-| THE BRIDGE | 6-7 | Understanding |
+| THE BRIDGE | 6 | Understanding |
 | THE SHIFT | 8-10 | Revelation → Grounding |
 | THE PRESSURE | 11-12 | Opportunity + Urgency |
-| THE PROVOCATION | 13-15 | Possibility |
-| THE PROOF | 16-19 | Tangibility |
-| THE PAYOFF | 20-22 | Resolution |
-| THE INVITATION | 23-26 | Activation |
+| THE PROVOCATION | 13-17 | Possibility → Structural insight |
+| THE PROOF | 18-21 | Tangibility |
+| THE PAYOFF | 22-24 | Resolution |
+| THE INVITATION | 25-28 | Activation |
 
