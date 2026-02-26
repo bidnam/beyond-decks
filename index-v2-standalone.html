@@ -337,7 +337,7 @@
             width: 100%;
             max-width: 700px;
             margin-top: 3rem;
-            align-items: center;
+            align-items: stretch;
         }
         .shift-side { padding: 2rem; border-radius: 12px; text-align: left; }
         .shift-before {
@@ -394,7 +394,7 @@
         /* ============================== */
         /* VALUE CURVE (Beat 12)          */
         /* ============================== */
-        .value-curve-svg { width: 100%; max-width: 600px; height: auto; margin: 2rem 0; }
+        .value-curve-svg { width: 100%; max-width: 600px; height: auto; margin: 2rem auto; }
         .curve-line { fill: none; stroke-linecap: round; }
 
         /* ============================== */
@@ -684,7 +684,7 @@
             <!-- BEAT 6 — Why We Leave -->
             <div class="frame bg-cream" id="beat-6" role="group" aria-roledescription="slide" aria-label="Slide 7: Why We Leave">
                 <p class="label">Why we leave</p>
-                <h3>Our thinking ends<br>where the deck ends.</h3>
+                <h2>Our thinking ends<br>where the deck ends.</h2>
                 <p class="body-text" style="margin: 1.5rem auto 0; color: var(--gray-600);">Not because we chose to stop — but because building<br>anything more meant different talent, different timelines,<br>different&nbsp;economics.</p>
                 <div class="word-pairs">
                     <span class="wp-header wp-header-left">Thinking</span>
@@ -705,8 +705,8 @@
             <!-- BEAT 8 — That's Changed -->
             <div class="frame bg-dark" id="beat-8" role="group" aria-roledescription="slide" aria-label="Slide 8: That's Changed">
                 <p class="label">The shift</p>
-                <h2>Building is now <em class="gradient-text">nearly free.</em></h2>
-                <p class="large-text" style="color: var(--gray-400); margin-top: 1rem;">The same hours spent perfecting a deck<br>can now produce a working prototype.</p>
+                <h2>The barrier to building<br>has <em class="gradient-text">collapsed.</em></h2>
+                <p class="large-text" style="color: var(--gray-400); margin-top: 1rem;">The same 40 hours that used to produce a deck<br>can now produce a deck <em>and</em> a working prototype.</p>
                 <div class="shift-comparison" id="shift-comparison">
                     <div class="shift-side shift-before">
                         <p class="shift-label">Before</p>
@@ -717,20 +717,26 @@
                     <div class="shift-side shift-now">
                         <p class="shift-label">Now</p>
                         <h4>40 hours</h4>
-                        <p>A working prototype. Interactive. Lives beyond the engagement.</p>
+                        <p>A polished deck <em>and</em> a working prototype.<br>Interactive. Lives beyond the engagement.</p>
                     </div>
                 </div>
             </div>
 
             <!-- BEAT 9 — Not Developers -->
             <div class="frame bg-dark" id="beat-9" role="group" aria-roledescription="slide" aria-label="Slide 9: Not Developers">
-                <p class="quote-text" style="color: var(--gray-400); font-size: clamp(1.75rem, 4vw, 2.75rem);">"But we're not developers."</p>
-                <h2 style="margin-bottom: 1.5rem;">That's the point.</h2>
-                <p class="body-text" style="margin: 0 auto 3rem; text-align: center; color: var(--gray-400);">The barrier isn't skill — it's imagination.<br>We've seen this before.</p>
-                <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 550px; width: 100%;" id="pattern-quotes">
-                    <div class="pattern-quote"><span class="pattern-year">1985:</span><span class="pattern-text">"But we're designers, not typesetters."</span></div>
-                    <div class="pattern-quote" style="margin-left: 1.5rem;"><span class="pattern-year">2000:</span><span class="pattern-text">"But we're creatives, not coders."</span></div>
-                    <div class="pattern-quote" style="margin-left: 3rem;"><span class="pattern-year">2026:</span><span class="pattern-text">"But we're strategists, not developers."</span></div>
+                <p class="quote-text" style="color: var(--gray-400);">"But we're not developers."</p>
+                <h2 style="margin-bottom: 1.5rem;">You don't need to be.</h2>
+                <p class="body-text" style="margin: 0 auto; text-align: center; color: var(--gray-400); max-width: 520px;">The thinking is the hard part. The building just got accessible.<br>Your expertise is what matters — the form it takes can change.</p>
+            </div>
+
+            <!-- BEAT 9b — Shape Changes -->
+            <div class="frame bg-dark" id="beat-9b" role="group" aria-roledescription="slide" aria-label="Slide 9b: The Shape Changes">
+                <p class="label">This isn't new</p>
+                <h2 style="margin-bottom: 2rem;">The core stays.<br>The shape changes.</h2>
+                <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 580px; width: 100%;" id="shape-examples">
+                    <div class="pattern-quote"><span class="pattern-text">Architects still design spaces. They stopped drafting by hand.</span></div>
+                    <div class="pattern-quote" style="margin-left: 1.5rem;"><span class="pattern-text">Journalists still break stories. They stopped setting type.</span></div>
+                    <div class="pattern-quote" style="margin-left: 3rem;"><span class="pattern-text">Strategists still solve problems. The deliverable doesn't have to be a deck.</span></div>
                 </div>
             </div>
 
@@ -769,22 +775,24 @@
                 <p class="label">The risk</p>
                 <h2 style="margin-bottom: 1rem;">Decks will feel<br>increasingly <em>thin.</em></h2>
                 <div class="value-curve-svg">
-                    <svg viewBox="0 0 740 250" preserveAspectRatio="xMidYMid meet">
+                    <svg viewBox="0 0 830 250" preserveAspectRatio="xMidYMid meet">
                         <defs>
                             <linearGradient id="curveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" style="stop-color:#4F46E5"/>
                                 <stop offset="100%" style="stop-color:#DC6843"/>
                             </linearGradient>
                         </defs>
-                        <line x1="40" y1="210" x2="560" y2="210" stroke="#D4D4D4" stroke-width="1"/>
-                        <line x1="40" y1="30" x2="40" y2="210" stroke="#D4D4D4" stroke-width="1"/>
-                        <text x="300" y="240" text-anchor="middle" fill="#737373" font-size="10" font-family="Inter, sans-serif">Time</text>
-                        <path id="curve-deck" class="curve-line" d="M 40 140 Q 180 135 300 140 Q 420 145 560 160" stroke="#9CA3AF" stroke-width="3" opacity="0.8"/>
-                        <path id="curve-building" class="curve-line" d="M 40 190 Q 180 180 300 140 Q 420 80 560 40" stroke="url(#curveGrad)" stroke-width="4"/>
-                        <circle id="curve-intersect" cx="300" cy="140" r="6" fill="#DC6843" opacity="0"/>
-                        <text id="curve-label-deck" x="570" y="175" font-size="11" font-weight="600" fill="#6B7280" font-family="Inter, sans-serif" opacity="0">Decks alone</text>
-                        <text id="curve-label-building" x="570" y="30" font-size="11" font-weight="600" fill="#4F46E5" font-family="Inter, sans-serif" opacity="0">Decks + Building</text>
-                        <text id="curve-now" x="300" y="125" text-anchor="middle" font-size="9" font-weight="600" fill="#DC6843" font-family="Inter, sans-serif" opacity="0">NOW</text>
+                        <g transform="translate(90, 0)">
+                            <line x1="40" y1="210" x2="560" y2="210" stroke="#D4D4D4" stroke-width="1"/>
+                            <line x1="40" y1="30" x2="40" y2="210" stroke="#D4D4D4" stroke-width="1"/>
+                            <text x="300" y="240" text-anchor="middle" fill="#737373" font-size="10" font-family="Inter, sans-serif">Time</text>
+                            <path id="curve-deck" class="curve-line" d="M 40 140 Q 180 135 300 140 Q 420 145 560 160" stroke="#9CA3AF" stroke-width="3" opacity="0.8"/>
+                            <path id="curve-building" class="curve-line" d="M 40 190 Q 180 180 300 140 Q 420 80 560 40" stroke="url(#curveGrad)" stroke-width="4"/>
+                            <circle id="curve-intersect" cx="300" cy="140" r="6" fill="#DC6843" opacity="0"/>
+                            <text id="curve-label-deck" x="570" y="175" font-size="11" font-weight="600" fill="#6B7280" font-family="Inter, sans-serif" opacity="0">Decks alone</text>
+                            <text id="curve-label-building" x="570" y="30" font-size="11" font-weight="600" fill="#4F46E5" font-family="Inter, sans-serif" opacity="0">Decks + Building</text>
+                            <text id="curve-now" x="300" y="125" text-anchor="middle" font-size="9" font-weight="600" fill="#DC6843" font-family="Inter, sans-serif" opacity="0">NOW</text>
+                        </g>
                     </svg>
                 </div>
                 <p class="large-text" style="color: var(--gray-700);"><strong class="gradient-text">The value curve is shifting.</strong><br>We should be ahead of it, not behind it.</p>
@@ -1103,10 +1111,10 @@
         // ==========================================
         // 27 frames, indices 0-26:
         // 0:Beat0  1:Beat1  2:Beat2  3:Beat3  4:Beat4  5:Beat5
-        // 6:Beat6  7:Beat8  8:Beat9  9:Beat10  10:Beat11  11:Beat12
-        // 12:Beat13  13:Beat14  14:Beat16  15:Beat17  16:Beat18
-        // 17:Beat19  18:Beat20  19:Beat21  20:Beat22  21:Beat23
-        // 22:Beat24  23:Beat25  24:Beat26  25:Beat27  26:Beat29
+        // 6:Beat6  7:Beat8  8:Beat9  9:Beat9b  10:Beat10  11:Beat11  12:Beat12
+        // 13:Beat13  14:Beat14  15:Beat16  16:Beat17  17:Beat18
+        // 18:Beat19  19:Beat20  20:Beat21  21:Beat22  22:Beat23
+        // 23:Beat24  24:Beat25  25:Beat26  26:Beat27  27:Beat29
 
         const strip = document.getElementById('cinema-strip');
         const allFrames = Array.from(strip.querySelectorAll('.frame'));
@@ -1131,8 +1139,8 @@
         // Quick cuts within evidence
         // 7-8 and 8-9 use standard speed (default)
         // Slow pans in payoff
-        TRANSITION_MAP.set('22-23', 'slow');  // beat 23 → beat 24
-        TRANSITION_MAP.set('23-24', 'slow');  // beat 24 → beat 25
+        TRANSITION_MAP.set('23-24', 'slow');  // beat 23 → beat 24
+        TRANSITION_MAP.set('24-25', 'slow');  // beat 24 → beat 25
 
         function getSpeed(from, to) {
             return TRANSITION_MAP.get(`${from}-${to}`) || 'standard';
@@ -1189,8 +1197,8 @@
             const next = current + dir;
             if (next < 0 || next >= TOTAL) return;
 
-            // Diverge sub-navigation (Beat 13 = frame 12)
-            if (dir === 1 && current === 12 && !allDivergeFormsRevealed()) {
+            // Diverge sub-navigation (Beat 13 = frame 13)
+            if (dir === 1 && current === 13 && !allDivergeFormsRevealed()) {
                 revealNextDivergeForm();
                 return;
             }
@@ -1403,17 +1411,22 @@
             gsap.to('.shift-center', { opacity: 1, scale: 1, duration: 0.5, delay: 0.4, ease: "back.out(2)" });
         });
 
-        // Beat 9 (frame 8) — Pattern quotes
+        // Beat 9 (frame 8) — Reassurance
         registerFrame(8, () => {
             animateIn(allFrames[8]);
-            const pqs = allFrames[8].querySelectorAll('.pattern-quote');
-            gsap.to(pqs, { opacity: 1, x: 0, duration: 0.6, stagger: 0.2, ease: "expo.out", delay: 0.3 });
         });
 
-        // Beat 10 (frame 9) — Counter animations
+        // Beat 9b (frame 9) — Shape changes
         registerFrame(9, () => {
             animateIn(allFrames[9]);
-            const stats = allFrames[9].querySelectorAll('.stat-full');
+            const examples = allFrames[9].querySelectorAll('.pattern-quote');
+            gsap.to(examples, { opacity: 1, x: 0, duration: 0.6, stagger: 0.2, ease: "expo.out", delay: 0.3 });
+        });
+
+        // Beat 10 (frame 10) — Counter animations
+        registerFrame(10, () => {
+            animateIn(allFrames[10]);
+            const stats = allFrames[10].querySelectorAll('.stat-full');
             stats.forEach((stat, i) => {
                 const counter = stat.querySelector('.counter');
                 const target = parseInt(stat.dataset.target);
@@ -1429,11 +1442,11 @@
             });
         });
 
-        // Beat 12 (frame 11) — Value curve
+        // Beat 12 (frame 12) — Value curve
         gsap.set("#curve-deck", { drawSVG: "0%" });
         gsap.set("#curve-building", { drawSVG: "0%" });
-        registerFrame(11, () => {
-            animateIn(allFrames[11]);
+        registerFrame(12, () => {
+            animateIn(allFrames[12]);
             const tl = gsap.timeline();
             tl.to("#curve-deck", { drawSVG: "100%", duration: 1.2, ease: "power2.inOut" })
               .to("#curve-building", { drawSVG: "100%", duration: 1.2, ease: "power2.inOut" }, "-=0.8")
@@ -1470,36 +1483,36 @@
             return divergeFormIndex >= divergeLines.length - 1;
         }
 
-        registerFrame(12, () => {
-            animateIn(allFrames[12]);
+        registerFrame(13, () => {
+            animateIn(allFrames[13]);
             gsap.to(divergeOrigin, { opacity: 1, duration: 0.4 });
             gsap.to(divergeOriginLabel, { opacity: 1, duration: 0.4, delay: 0.1 });
         });
 
-        // Beat 14 (frame 13) — Extend journey
+        // Beat 14 (frame 14) — Extend journey
         gsap.set("#extend-progress-new", { drawSVG: "0%" });
-        registerFrame(13, () => {
-            animateIn(allFrames[13]);
+        registerFrame(14, () => {
+            animateIn(allFrames[14]);
             const tl = gsap.timeline();
             tl.to("#extend-bracket-before", { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.3)
               .to("#extend-progress-new", { drawSVG: "100%", duration: 1.2, ease: "power2.inOut" }, 0.6)
               .to("#extend-bracket-new", { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.2);
         });
 
-        // Beat 17 (frame 15) — Spectrum 2x2
-        registerFrame(15, () => {
-            animateIn(allFrames[15]);
-            const cells = allFrames[15].querySelectorAll('.spectrum-cell');
+        // Beat 17 (frame 16) — Spectrum 2x2
+        registerFrame(16, () => {
+            animateIn(allFrames[16]);
+            const cells = allFrames[16].querySelectorAll('.spectrum-cell');
             gsap.to(cells, { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: "expo.out", delay: 0.3 });
         });
 
         // Beats 19-22b (frames 17-21) — Morph
         [
-            { id: 'morph-19', f: 17 },
-            { id: 'morph-20', f: 18 },
-            { id: 'morph-21', f: 19 },
-            { id: 'morph-22', f: 20 },
-            { id: 'morph-22b', f: 21 }
+            { id: 'morph-19', f: 18 },
+            { id: 'morph-20', f: 19 },
+            { id: 'morph-21', f: 20 },
+            { id: 'morph-22', f: 21 },
+            { id: 'morph-22b', f: 22 }
         ].forEach(({ id, f }) => {
             const c = document.getElementById(id);
             if (!c) return;
@@ -1520,8 +1533,8 @@
             });
         });
 
-        // Beat 29 (frame 27) — Final statement
-        registerFrame(27, () => {
+        // Beat 29 (frame 28) — Final statement
+        registerFrame(28, () => {
             gsap.set('#final-statement', { opacity: 1, y: 0 });
             SplitText.create("#final-statement", {
                 type: "lines", mask: "lines", autoSplit: true,
@@ -1534,7 +1547,7 @@
         });
 
         // Register generic fade-up for remaining frames
-        const customFrames = new Set([0, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 15, 17, 18, 19, 20, 21, 27]);
+        const customFrames = new Set([0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16, 18, 19, 20, 21, 22, 28]);
         allFrames.forEach((frame, i) => {
             if (customFrames.has(i)) return;
             registerFrame(i, () => animateIn(frame));
