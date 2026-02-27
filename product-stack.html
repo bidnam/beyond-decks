@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Consulting Product Taxonomy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300..700;1,300..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F5F3EF;
+            --surface: #FEFDFB;
+            --text: #1C1917;
+            --text-2: #57534E;
+            --text-3: #A8A29E;
+            --accent: #292524;
+            --accent-warm: #C2553A;
+            --border: #E7E5E4;
+            --hover: #EEEDEB;
+            --font-serif: 'Playfair Display', Georgia, serif;
+            --font-sans: 'DM Sans', system-ui, sans-serif;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --speed: 0.25s;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition-duration: 0s !important; animation-duration: 0s !important; }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--surface);
+        }
+
+        /* ============================== */
+        /* HEADER                         */
+        /* ============================== */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 3rem;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .site-title {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .tab-btn {
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0;
+            border: none;
+            background: transparent;
+            color: var(--text-3);
+            cursor: pointer;
+            transition: color var(--speed) var(--ease);
+        }
+
+        .tab-btn:hover { color: var(--text); }
+        .tab-btn.active { color: var(--text); border-bottom: 2px solid var(--accent-warm); padding-bottom: 2px; }
+
+        /* ============================== */
+        /* VIEWS                          */
+        /* ============================== */
+        .view {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 3rem 6rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .view.active { display: block; }
+
+        /* ============================== */
+        /* TAXONOMY — TWO PANEL           */
+        /* ============================== */
+        .taxonomy-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        /* LEFT: Tier list */
+        .tier-list {
+            padding-top: 3rem;
+        }
+
+        .tier-band {
+            display: flex;
+            align-items: baseline;
+            gap: 1.25rem;
+            padding: 1.35rem 0;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all var(--speed) var(--ease);
+            position: relative;
+        }
+
+        .tier-band::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: transparent;
+            transition: background var(--speed) var(--ease);
+        }
+
+        .tier-band:hover { background: var(--hover); margin: 0 -1.5rem; padding: 1.35rem 1.5rem; }
+
+        .tier-band.selected {
+            background: transparent;
+            margin: 0;
+            padding: 1.35rem 0;
+        }
+
+        .tier-band.selected::before {
+            background: var(--accent-warm);
+        }
+
+        .tier-number {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 400;
+            line-height: 1;
+            color: var(--border);
+            width: 2.5rem;
+            flex-shrink: 0;
+            transition: color var(--speed) var(--ease);
+        }
+
+        .tier-band:hover .tier-number { color: var(--text-3); }
+        .tier-band.selected .tier-number { color: var(--accent-warm); }
+
+        .tier-info { flex: 1; }
+
+        .tier-name {
+            font-family: var(--font-serif);
+            font-size: 1.35rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+            color: var(--text-2);
+            transition: color var(--speed) var(--ease);
+        }
+
+        .tier-band:hover .tier-name { color: var(--text); }
+        .tier-band.selected .tier-name { color: var(--text); }
+
+        /* RIGHT: Detail panel */
+        .detail-panel {
+            padding-top: 3rem;
+            position: relative;
+            min-height: 100%;
+        }
+
+        .detail-content {
+            position: sticky;
+            top: 80px;
+            transition: opacity var(--speed) var(--ease), transform var(--speed) var(--ease);
+        }
+
+        .detail-empty {
+            padding: 4rem 0;
+            color: var(--text-3);
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .detail-tier-number {
+            font-family: var(--font-serif);
+            font-size: 6rem;
+            font-weight: 400;
+            line-height: 1;
+            color: #EDDAD4;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-name {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-description {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: var(--text-2);
+            margin-bottom: 2.5rem;
+        }
+
+        .detail-vectors {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-vector {
+            flex: 1;
+        }
+
+        .detail-vector-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-vector-value {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            margin-bottom: 0.6rem;
+        }
+
+        .detail-section-body {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-2);
+        }
+
+        .detail-section-body ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-section-body li {
+            padding: 0.2rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .detail-section-body li::before {
+            content: '\2014';
+            position: absolute;
+            left: -0.25rem;
+            color: var(--text-3);
+            font-size: 0.75rem;
+        }
+
+        /* ============================== */
+        /* SCOPE VIEW                     */
+        /* ============================== */
+        .scope-container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding-top: 4rem;
+        }
+
+        .scope-progress {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 3.5rem;
+        }
+
+        .scope-progress-dot {
+            height: 1px;
+            flex: 1;
+            background: var(--border);
+            transition: background var(--speed) var(--ease);
+        }
+
+        .scope-progress-dot.complete { background: var(--text); }
+        .scope-progress-dot.current { background: var(--text-3); }
+
+        .scope-question-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            margin-bottom: 1rem;
+        }
+
+        .scope-question {
+            font-family: var(--font-serif);
+            font-size: clamp(1.75rem, 3vw, 2.25rem);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 2.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .scope-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .scope-option {
+            display: block;
+            padding: 1rem 0;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            transition: all var(--speed) var(--ease);
+            text-align: left;
+            font-family: var(--font-sans);
+            color: var(--text);
+            width: 100%;
+        }
+
+        .scope-option:first-child { border-top: 1px solid var(--border); }
+
+        .scope-option:hover { padding-left: 0.75rem; }
+
+        .scope-option.selected {
+            padding-left: 0.75rem;
+            border-left: 2px solid var(--text);
+        }
+
+        .scope-option-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.1rem;
+        }
+
+        .scope-option-desc {
+            font-size: 0.8rem;
+            color: var(--text-2);
+            line-height: 1.45;
+        }
+
+        .scope-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2.5rem;
+        }
+
+        .scope-btn {
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.65rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0;
+            background: transparent;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: all var(--speed) var(--ease);
+            letter-spacing: 0.02em;
+        }
+
+        .scope-btn:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        .scope-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--surface);
+        }
+
+        .scope-btn.primary:hover { background: #0C0A09; }
+        .scope-btn:disabled { opacity: 0.2; pointer-events: none; }
+
+        /* Scope Result */
+        .scope-result { text-align: center; }
+
+        .scope-result-tier {
+            font-family: var(--font-serif);
+            font-size: 5rem;
+            line-height: 1;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .scope-result-name {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .scope-result-desc {
+            font-size: 0.9rem;
+            color: var(--text-2);
+            margin-bottom: 2.5rem;
+            line-height: 1.65;
+        }
+
+        .scope-result-section {
+            text-align: left;
+            margin-bottom: 1.5rem;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .scope-result-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-3);
+            margin-bottom: 0.5rem;
+        }
+
+        .scope-result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .scope-result-body {
+            font-size: 0.9rem;
+            line-height: 1.65;
+            color: var(--text-2);
+        }
+
+        .scope-result-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+
+        /* Dimension tags */
+        .dim-tag {
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0.2rem 0.6rem;
+            letter-spacing: 0.02em;
+        }
+
+        .dim-tag.audience { background: #EDE9FE; color: #5B21B6; }
+        .dim-tag.data { background: #FEF3C7; color: #92400E; }
+        .dim-tag.lifespan { background: #D1FAE5; color: #065F46; }
+
+        /* ============================== */
+        /* MOBILE                         */
+        /* ============================== */
+        @media (max-width: 1023px) {
+            .taxonomy-layout {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .detail-panel {
+                padding-top: 0;
+            }
+
+            .detail-content {
+                position: static;
+                border-top: 1px solid var(--border);
+                padding-top: 2rem;
+                margin-top: 1rem;
+            }
+
+            .detail-tier-number { display: none; }
+        }
+
+        @media (max-width: 767px) {
+            .header-inner {
+                padding: 1rem 1.5rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .view { padding: 0 1.5rem 4rem; }
+            .tier-list { padding-top: 2rem; }
+            .tier-number { font-size: 2rem; width: 2rem; }
+            .tier-name { font-size: 1.15rem; }
+            .tier-band:hover { margin: 0 -1rem; padding: 1.35rem 1rem; }
+            .tier-band::before { left: -1.5rem; }
+        }
+
+        /* ============================== */
+        /* A11Y                           */
+        /* ============================== */
+        .tier-band:focus-visible,
+        .tab-btn:focus-visible,
+        .scope-option:focus-visible {
+            outline: 2px solid var(--text);
+            outline-offset: 2px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="site-title">The Consulting Product Taxonomy</div>
+            <nav class="tab-nav" role="tablist">
+                <button class="tab-btn active" role="tab" aria-selected="true" data-view="stack">Taxonomy</button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-view="scope">Scope</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="view active" id="view-stack" role="tabpanel">
+        <div class="taxonomy-layout">
+            <div class="tier-list" id="tier-list"></div>
+            <div class="detail-panel">
+                <div class="detail-content" id="detail-content">
+                    <div class="detail-empty">Select a tier to explore.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="view" id="view-scope" role="tabpanel">
+        <div class="scope-container" id="scope-container"></div>
+    </div>
+
+    <script>
+    const DATA = {
+        tiers: [
+            {
+                tier: 0,
+                name: 'Atomic Primitives',
+                vectors: { effort: 'Writing only', data: 'None', interaction: 'Read and adapt' },
+                description: 'Documents, prompts, templates, and frameworks. Things you write once and reuse across engagements. No code\u2014just clear thinking, written well enough to work every time.',
+                buildReqs: 'Writing and clear thinking. No code, no hosting.',
+                examples: [
+                    'Reusable prompts and prompt chains',
+                    'Interview guides, workshop scripts, brief templates',
+                    'Strategy frameworks and methodology docs',
+                    'Project scaffolds and configuration files',
+                    'Checklists, scoring rubrics, evaluation criteria'
+                ]
+            },
+            {
+                tier: 1,
+                name: 'Enhanced Deliverables',
+                vectors: { effort: 'Light code', data: 'Embedded in the file', interaction: 'Open and explore' },
+                description: 'The same thinking you\u2019d put in a deck, but interactive, navigable, and self-contained. You\u2019re not building something new\u2014you\u2019re giving existing work a better container. Open the file and it works.',
+                buildReqs: 'HTML/CSS/JS in a single file or small folder. No build system, no backend. Host it or just send the file.',
+                examples: [
+                    'Interactive research reports with source navigation',
+                    'Scroll-driven presentations',
+                    'Annotated competitive landscapes',
+                    'Strategy-on-a-page with expandable sections',
+                    'Data-driven infographics with embedded data'
+                ]
+            },
+            {
+                tier: 2,
+                name: 'Standalone Tools',
+                vectors: { effort: 'Frontend + APIs', data: 'Passes through, nothing stored', interaction: 'Input, get output' },
+                description: 'Single-purpose utilities. Run it, get output, move on. No accounts, no saved data. The value compounds\u2014a tool you build for one engagement gets used in the next ten.',
+                buildReqs: 'Frontend code, possibly LLM API calls. No backend, no database. May need an API key at runtime.',
+                examples: [
+                    'Prompt enhancer',
+                    'Brief quality scorer',
+                    'Naming brainstorm generator',
+                    'Messaging hierarchy builder',
+                    'Competitive positioning gap analyzer'
+                ]
+            },
+            {
+                tier: 3,
+                name: 'Guided Experiences',
+                vectors: { effort: 'App development', data: 'Session only — gone after', interaction: 'Follow a guided workflow' },
+                description: 'Multi-step workflows that walk someone through your methodology. It runs without you in the room\u2014the experience encodes your judgment, your sequencing, your POV on what matters.',
+                buildReqs: 'Frontend framework, LLM integration, session state. No persistent backend\u2014state lives in memory or localStorage.',
+                examples: [
+                    'Campaign brief coaching tool',
+                    'Brand positioning wargame',
+                    'Digital stakeholder alignment workshop',
+                    'Market entry scenario planner',
+                    'Creative brief builder with AI feedback'
+                ]
+            },
+            {
+                tier: 4,
+                name: 'Collaborative Platforms',
+                vectors: { effort: 'Full-stack', data: 'Persistent — shared and growing', interaction: 'Collaborate in real-time' },
+                description: 'Multiple people, shared data, persistent state. Users log in, contribute, and build on each other\u2019s work over time. Real infrastructure, real maintenance\u2014build here when the value justifies it.',
+                buildReqs: 'Backend (Firebase, Supabase, etc.), authentication, real-time sync, data modeling. Meaningfully more complex to build and maintain.',
+                examples: [
+                    'Team voting and evaluation tools',
+                    'Content collaboration workspaces',
+                    'Client portals with artifacts and commenting',
+                    'Research repositories with team annotations',
+                    'Campaign tracking with multi-user input'
+                ]
+            },
+            {
+                tier: 5,
+                name: 'Automated Systems',
+                vectors: { effort: 'Infra + pipelines', data: 'Accumulating — becomes an asset', interaction: 'Runs unattended' },
+                description: 'Things that run without anyone pressing a button. They collect, process, and surface information on a schedule. Over time, they build proprietary datasets\u2014compounding information advantages that are hard to replicate.',
+                buildReqs: 'Scripts, APIs, scheduled jobs, data pipelines. May or may not have a frontend\u2014some are entirely headless.',
+                examples: [
+                    'Competitive intelligence collection',
+                    'Market sentiment tracking',
+                    'Client media monitoring with alerts',
+                    'Automated reporting pipelines',
+                    'Content performance tracking'
+                ]
+            }
+        ],
+        scopeQuestions: [
+            {
+                label: 'Question 1 of 5',
+                question: 'What form does this take?',
+                options: [
+                    { label: 'Document, template, or framework', desc: 'A reusable written artifact \u2014 prompt, checklist, methodology doc', value: 0 },
+                    { label: 'Interactive report or presentation', desc: 'A static deliverable with better form \u2014 HTML, navigable, self-contained', value: 1 },
+                    { label: 'Single-purpose utility', desc: 'Does one thing well, used repeatedly. No persistent data', value: 2 },
+                    { label: 'Multi-step guided process', desc: 'Walks a user through a methodology with AI feedback', value: 3 },
+                    { label: 'Multi-user platform', desc: 'Accounts, shared state, persistent data, real-time collaboration', value: 4 },
+                    { label: 'Automated system', desc: 'Runs on schedule or trigger without human initiation', value: 5 }
+                ],
+                dimension: 'tier'
+            },
+            {
+                label: 'Question 2 of 5',
+                question: 'Who uses it?',
+                options: [
+                    { label: 'Internal \u2014 your team', desc: 'You control the environment. Functional polish is enough', value: 'Internal' },
+                    { label: 'Client, with you present', desc: 'Used in workshops or meetings. Needs to be presentable', value: 'Client-Guided' },
+                    { label: 'Client, on their own', desc: 'Self-serve. Needs to be polished and intuitive', value: 'Client Self-Serve' }
+                ],
+                dimension: 'audience'
+            },
+            {
+                label: 'Question 3 of 5',
+                question: 'What data flows through it?',
+                options: [
+                    { label: 'Generic / public data', desc: 'Your methodology, public info. Build fast, share freely', value: 'None' },
+                    { label: 'Anonymized client context', desc: 'General industry data, anonymized insights. Reasonable care', value: 'Low' },
+                    { label: 'Client strategy / competitive intel', desc: 'Sensitive business data. Needs secure hosting and access controls', value: 'Medium' },
+                    { label: 'PII, financial, or regulated data', desc: 'Requires auth, encryption, data retention policies', value: 'High' }
+                ],
+                dimension: 'data'
+            },
+            {
+                label: 'Question 4 of 5',
+                question: 'How long does it need to live?',
+                options: [
+                    { label: 'One session or workshop', desc: 'Use it once, done. Zero maintenance', value: 'Ephemeral' },
+                    { label: 'Weeks to months', desc: 'Scoped to an engagement. Minimal upkeep', value: 'Engagement' },
+                    { label: 'Ongoing / indefinite', desc: 'Needs real maintenance, updates, monitoring', value: 'Persistent' }
+                ],
+                dimension: 'lifespan'
+            },
+            {
+                label: 'Question 5 of 5',
+                question: 'What infrastructure does it need?',
+                options: [
+                    { label: 'None \u2014 just a file', desc: 'Markdown, PDF, or a simple HTML file. No hosting needed', value: 'validate-low' },
+                    { label: 'Static hosting only', desc: 'HTML/CSS/JS, maybe CDN fonts. No backend', value: 'validate-low' },
+                    { label: 'API calls at runtime', desc: 'LLM API, external data sources. Needs API keys but no backend', value: 'validate-mid' },
+                    { label: 'Backend + database', desc: 'Auth, persistent storage, real-time sync. Real infrastructure', value: 'validate-high' },
+                    { label: 'Scheduled jobs + pipelines', desc: 'Cron, scraping, data processing. Runs unattended', value: 'validate-auto' }
+                ],
+                dimension: 'infra'
+            }
+        ]
+    };
+
+    const state = {
+        currentView: 'stack',
+        selectedTier: null,
+        scopeStep: 0,
+        scopeAnswers: {}
+    };
+
+    // Tab nav
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchView(btn.dataset.view));
+    });
+
+    function switchView(view) {
+        state.currentView = view;
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.view === view);
+            b.setAttribute('aria-selected', b.dataset.view === view);
+        });
+        document.querySelectorAll('.view').forEach(v => {
+            v.classList.toggle('active', v.id === `view-${view}`);
+        });
+    }
+
+    // Taxonomy
+    function renderTierList() {
+        const list = document.getElementById('tier-list');
+        list.innerHTML = '';
+        DATA.tiers.forEach(tier => {
+            const band = document.createElement('div');
+            band.className = 'tier-band' + (state.selectedTier === tier.tier ? ' selected' : '');
+            band.setAttribute('tabindex', '0');
+            band.setAttribute('role', 'button');
+            band.setAttribute('aria-label', `Tier ${tier.tier}: ${tier.name}`);
+            band.dataset.tier = tier.tier;
+
+            band.innerHTML = `
+                <div class="tier-number">${tier.tier}</div>
+                <div class="tier-info">
+                    <div class="tier-name">${tier.name}</div>
+                </div>
+            `;
+
+            band.addEventListener('click', () => {
+                state.selectedTier = state.selectedTier === tier.tier ? null : tier.tier;
+                renderTierList();
+                renderDetail();
+                // Position detail panel to align with selected tier
+                if (state.selectedTier !== null) {
+                    positionDetail(band);
+                }
+            });
+            band.addEventListener('keydown', (e) => { if (e.key === 'Enter') band.click(); });
+
+            list.appendChild(band);
+        });
+    }
+
+    function positionDetail(bandEl) {
+        const panel = document.getElementById('detail-content');
+        // On desktop, offset the sticky top to align with the clicked tier
+        if (window.innerWidth > 1023) {
+            const headerH = document.querySelector('.site-header').offsetHeight;
+            const bandRect = bandEl.getBoundingClientRect();
+            const desiredTop = Math.max(headerH + 16, bandRect.top + window.scrollY - document.querySelector('.detail-panel').getBoundingClientRect().top - window.scrollY + headerH);
+            // Use simple sticky top — the content just sticks near the header
+            panel.style.top = headerH + 16 + 'px';
+        }
+    }
+
+    function renderDetail() {
+        const panel = document.getElementById('detail-content');
+        if (state.selectedTier === null) {
+            panel.innerHTML = '<div class="detail-empty">Select a tier to explore.</div>';
+            return;
+        }
+        const tier = DATA.tiers[state.selectedTier];
+        panel.innerHTML = `
+            <div class="detail-tier-number">${tier.tier}</div>
+            <h2 class="detail-name">${tier.name}</h2>
+            <div class="detail-vectors">
+                <div class="detail-vector">
+                    <div class="detail-vector-label">Effort</div>
+                    <div class="detail-vector-value">${tier.vectors.effort}</div>
+                </div>
+                <div class="detail-vector">
+                    <div class="detail-vector-label">Data</div>
+                    <div class="detail-vector-value">${tier.vectors.data}</div>
+                </div>
+                <div class="detail-vector">
+                    <div class="detail-vector-label">Interaction</div>
+                    <div class="detail-vector-value">${tier.vectors.interaction}</div>
+                </div>
+            </div>
+            <p class="detail-description">${tier.description}</p>
+            <div class="detail-section">
+                <div class="detail-section-label">Build Requirements</div>
+                <div class="detail-section-body">${tier.buildReqs}</div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-section-label">Examples</div>
+                <div class="detail-section-body">
+                    <ul>${tier.examples.map(e => `<li>${e}</li>`).join('')}</ul>
+                </div>
+            </div>
+        `;
+    }
+
+    // Scope
+    function renderScope() {
+        const container = document.getElementById('scope-container');
+        const step = state.scopeStep;
+        const questions = DATA.scopeQuestions;
+
+        if (step >= questions.length) { renderScopeResult(); return; }
+
+        const q = questions[step];
+        container.innerHTML = `
+            <div class="scope-progress">
+                ${questions.map((_, i) => `<div class="scope-progress-dot${i < step ? ' complete' : i === step ? ' current' : ''}"></div>`).join('')}
+            </div>
+            <div class="scope-question-label">${q.label}</div>
+            <h2 class="scope-question">${q.question}</h2>
+            <div class="scope-options">
+                ${q.options.map((opt, i) => `
+                    <button class="scope-option${state.scopeAnswers[q.dimension] === opt.value ? ' selected' : ''}" data-index="${i}" tabindex="0">
+                        <div>
+                            <div class="scope-option-label">${opt.label}</div>
+                            <div class="scope-option-desc">${opt.desc}</div>
+                        </div>
+                    </button>
+                `).join('')}
+            </div>
+            <div class="scope-nav">
+                <button class="scope-btn" id="scope-back" ${step === 0 ? 'disabled' : ''}>Back</button>
+                <button class="scope-btn primary" id="scope-next" ${state.scopeAnswers[q.dimension] === undefined ? 'disabled' : ''}>
+                    ${step === questions.length - 1 ? 'See Result' : 'Next'}
+                </button>
+            </div>
+        `;
+
+        container.querySelectorAll('.scope-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                state.scopeAnswers[q.dimension] = q.options[parseInt(opt.dataset.index)].value;
+                renderScope();
+            });
+        });
+        container.querySelector('#scope-back').addEventListener('click', () => { state.scopeStep = Math.max(0, step - 1); renderScope(); });
+        container.querySelector('#scope-next').addEventListener('click', () => {
+            if (state.scopeAnswers[q.dimension] !== undefined) { state.scopeStep = step + 1; renderScope(); }
+        });
+    }
+
+    function renderScopeResult() {
+        const container = document.getElementById('scope-container');
+        const tierNum = state.scopeAnswers.tier ?? 0;
+        const tier = DATA.tiers[tierNum];
+
+        container.innerHTML = `
+            <div class="scope-progress">
+                ${DATA.scopeQuestions.map(() => '<div class="scope-progress-dot complete"></div>').join('')}
+            </div>
+            <div class="scope-result">
+                <div class="scope-result-tier">${tierNum}</div>
+                <div class="scope-result-name">${tier.name}</div>
+                <p class="scope-result-desc">${tier.description}</p>
+                <div class="scope-result-section">
+                    <div class="scope-result-section-title">Classification</div>
+                    <div class="scope-result-tags">
+                        <span class="dim-tag audience">${state.scopeAnswers.audience || 'Internal'}</span>
+                        <span class="dim-tag data">${state.scopeAnswers.data || 'None'} data</span>
+                        <span class="dim-tag lifespan">${state.scopeAnswers.lifespan || 'Ephemeral'}</span>
+                    </div>
+                </div>
+                <div class="scope-result-section">
+                    <div class="scope-result-section-title">Build Requirements</div>
+                    <div class="scope-result-body">${tier.buildReqs}</div>
+                </div>
+                <div class="scope-result-actions">
+                    <button class="scope-btn" id="scope-restart">Start Over</button>
+                    <button class="scope-btn primary" id="scope-view-tier">View in Taxonomy</button>
+                </div>
+            </div>
+        `;
+
+        container.querySelector('#scope-restart').addEventListener('click', () => { state.scopeStep = 0; state.scopeAnswers = {}; renderScope(); });
+        container.querySelector('#scope-view-tier').addEventListener('click', () => {
+            state.selectedTier = tierNum;
+            switchView('stack');
+            renderTierList();
+            renderDetail();
+        });
+    }
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && state.selectedTier !== null) {
+            state.selectedTier = null;
+            renderTierList();
+            renderDetail();
+        }
+    });
+
+    // Init
+    renderTierList();
+    renderScope();
+    </script>
+</body>
+</html>
