@@ -14,7 +14,7 @@ A deck can launch the transformation. It can't sustain the force.
 
 **What if our thinking could take more forms?**
 
-Building is now nearly free. We can create lightweight, high-leverage things that give our thinking more surface area—more ways to engage, more moments where it's useful, more durability. Not enterprise software. Tools. Prototypes. Different ways to present and convey our problem-solving.
+The barrier to building has collapsed. We can create lightweight, high-leverage things that give our thinking more surface area—more ways to engage, more moments where it's useful, more durability. Not enterprise software. Tools. Prototypes. Different ways to present and convey our problem-solving.
 
 **THIS is what winning on relationships actually means.** Not schmoozing. Not just being likable. Extending what's possible. Being present in more forms, at more moments, in more ways.
 
@@ -100,9 +100,10 @@ All lightweight. All learnable. All compounding.
 
 | # | Beat | Core Message |
 |---|------|--------------|
-| 8 | **That's Changed** | Building is now nearly free. The same hours spent perfecting a deck can now produce a working prototype. |
-| 9 | **"But We're Not Developers"** | That's the point. The barrier isn't skill—it's imagination. You don't have to become a builder. But you should know what's now possible—and who's already doing it. |
-| 10 | **We've Seen This Before** | In 1985, designers said "we're not typesetters." The ones who moved first found leverage that compounded. The signs are clear we're in one of those moments now—likely a larger one. |
+| 8 | **That's Changed** | The barrier to building has collapsed. The same 40 hours that used to produce a deck can now produce a deck *and* a working prototype. |
+| 9 | **"But We're Not Developers"** | You don't need to be. The thinking is the hard part. The building just got accessible. Your expertise is what matters — the form it takes can change. |
+| 9b | **The Shape Changes** | The core stays, the shape changes. Architects still design spaces — they stopped drafting by hand. Journalists still break stories — they stopped setting type. Strategists still solve problems — the deliverable doesn't have to be a deck. |
+| 10 | **Evidence** | The evidence that this shift is real and accelerating. |
 
 ---
 
@@ -333,7 +334,7 @@ A new tool blurs a professional boundary. Early movers gain leverage. That lever
 
 2. **Build a library** — Reusable tools, templates, frameworks that compound across engagements.
 
-3. **Evolve the model** — Think about how billing, staffing, and scoping change when building is nearly free.
+3. **Evolve the model** — Think about how billing, staffing, and scoping change when the barrier to building has collapsed.
 
 ### Tools to Explore
 - Lovable

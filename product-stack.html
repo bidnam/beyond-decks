@@ -106,98 +106,123 @@
         .view.active { display: block; }
 
         /* ============================== */
-        /* TAXONOMY — TWO PANEL           */
+        /* TAXONOMY — STACKED LAYOUT      */
         /* ============================== */
         .taxonomy-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: start;
+            grid-template-columns: 1fr;
         }
 
-        /* LEFT: Tier list */
+        /* Tier nav — periodic table cells */
         .tier-list {
-            padding-top: 3rem;
+            display: flex;
+            overflow-x: auto;
+            padding: 1.5rem 0 0;
+            gap: 6px;
+        }
+
+        .tier-spectrum {
+            position: relative;
+            padding: 0.75rem 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .tier-spectrum-line {
+            width: 100%;
+            height: 1px;
+            background: var(--text-3);
+            position: relative;
+        }
+
+        .tier-spectrum-line::after {
+            content: '';
+            position: absolute;
+            right: -1px;
+            top: -3px;
+            border: 3.5px solid transparent;
+            border-left: 5px solid var(--text-3);
+        }
+
+        .tier-spectrum-label {
+            font-size: 0.7rem;
+            color: var(--text-3);
+            letter-spacing: 0.02em;
         }
 
         .tier-band {
             display: flex;
-            align-items: baseline;
-            gap: 1.25rem;
-            padding: 1.35rem 0;
-            border-bottom: 1px solid var(--border);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-width: 0;
+            aspect-ratio: 1 / 0.9;
+            padding: 1.25rem 0.75rem 1rem;
             cursor: pointer;
             transition: all var(--speed) var(--ease);
             position: relative;
+            border-radius: 6px;
+            background: var(--tier-bg, var(--hover));
         }
 
-        .tier-band::before {
-            content: '';
-            position: absolute;
-            left: -3rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: transparent;
-            transition: background var(--speed) var(--ease);
-        }
-
-        .tier-band:hover { background: var(--hover); margin: 0 -1.5rem; padding: 1.35rem 1.5rem; }
+        .tier-band:hover { opacity: 0.85; }
 
         .tier-band.selected {
-            background: transparent;
-            margin: 0;
-            padding: 1.35rem 0;
-        }
-
-        .tier-band.selected::before {
-            background: var(--accent-warm);
+            box-shadow: inset 0 0 0 2.5px var(--tier-fg, var(--text));
         }
 
         .tier-number {
             font-family: var(--font-serif);
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             font-weight: 400;
             line-height: 1;
-            color: var(--border);
-            width: 2.5rem;
-            flex-shrink: 0;
+            color: var(--tier-fg, var(--text-2));
+            text-align: center;
             transition: color var(--speed) var(--ease);
+            margin-bottom: 0.4rem;
         }
 
-        .tier-band:hover .tier-number { color: var(--text-3); }
-        .tier-band.selected .tier-number { color: var(--accent-warm); }
-
-        .tier-info { flex: 1; }
+        .tier-info { text-align: center; }
 
         .tier-name {
-            font-family: var(--font-serif);
-            font-size: 1.35rem;
-            font-weight: 400;
-            letter-spacing: -0.02em;
-            line-height: 1.3;
-            color: var(--text-2);
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            color: var(--tier-fg, var(--text-2));
+            text-align: center;
+            opacity: 0.7;
             transition: color var(--speed) var(--ease);
         }
 
-        .tier-band:hover .tier-name { color: var(--text); }
-        .tier-band.selected .tier-name { color: var(--text); }
+        .tier-band:hover .tier-name { opacity: 1; }
+        .tier-band.selected .tier-name { opacity: 1; }
 
-        /* RIGHT: Detail panel */
+        /* Tier colors */
+        .tier-band[data-tier="0"] { --tier-bg: #F3EADF; --tier-fg: #8B6F47; }
+        .tier-band[data-tier="1"] { --tier-bg: #E8EDF5; --tier-fg: #4A5A7A; }
+        .tier-band[data-tier="2"] { --tier-bg: #E5F0EA; --tier-fg: #3D6B52; }
+        .tier-band[data-tier="3"] { --tier-bg: #F2E8EF; --tier-fg: #7A4568; }
+        .tier-band[data-tier="4"] { --tier-bg: #EDE5D8; --tier-fg: #6B5B3E; }
+        .tier-band[data-tier="5"] { --tier-bg: #E3EAED; --tier-fg: #3E5C6B; }
+
+        /* Detail panel — drops below tier nav */
         .detail-panel {
-            padding-top: 3rem;
             position: relative;
-            min-height: 100%;
         }
 
         .detail-content {
-            position: sticky;
-            top: 80px;
+            max-width: 680px;
+            padding-top: 2rem;
             transition: opacity var(--speed) var(--ease), transform var(--speed) var(--ease);
         }
 
         .detail-empty {
-            padding: 4rem 0;
+            padding: 3rem 0;
             color: var(--text-3);
             font-size: 0.85rem;
             font-style: italic;
@@ -208,7 +233,6 @@
             font-size: 6rem;
             font-weight: 400;
             line-height: 1;
-            color: #EDDAD4;
             margin-bottom: 1.5rem;
         }
 
@@ -249,11 +273,29 @@
             margin-bottom: 0.25rem;
         }
 
+        .detail-vector-dots {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-vector-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .detail-vector-dot.filled {
+            background: var(--text);
+        }
+
         .detail-vector-value {
             font-size: 0.85rem;
             font-weight: 500;
             color: var(--text);
         }
+
 
         .detail-section {
             margin-bottom: 2rem;
@@ -487,26 +529,6 @@
         /* ============================== */
         /* MOBILE                         */
         /* ============================== */
-        @media (max-width: 1023px) {
-            .taxonomy-layout {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-
-            .detail-panel {
-                padding-top: 0;
-            }
-
-            .detail-content {
-                position: static;
-                border-top: 1px solid var(--border);
-                padding-top: 2rem;
-                margin-top: 1rem;
-            }
-
-            .detail-tier-number { display: none; }
-        }
-
         @media (max-width: 767px) {
             .header-inner {
                 padding: 1rem 1.5rem;
@@ -515,11 +537,10 @@
             }
 
             .view { padding: 0 1.5rem 4rem; }
-            .tier-list { padding-top: 2rem; }
-            .tier-number { font-size: 2rem; width: 2rem; }
-            .tier-name { font-size: 1.15rem; }
-            .tier-band:hover { margin: 0 -1rem; padding: 1.35rem 1rem; }
-            .tier-band::before { left: -1.5rem; }
+            .tier-list { padding-top: 1rem; gap: 4px; }
+            .tier-band { padding: 0.75rem 0.5rem; min-width: 56px; flex: 0 0 auto; }
+            .tier-number { font-size: 2.25rem; }
+            .tier-name { font-size: 0.65rem; }
         }
 
         /* ============================== */
@@ -552,6 +573,10 @@
     <div class="view active" id="view-stack" role="tabpanel">
         <div class="taxonomy-layout">
             <div class="tier-list" id="tier-list"></div>
+            <div class="tier-spectrum">
+                <div class="tier-spectrum-line"></div>
+                <div class="tier-spectrum-label">Build complexity, maintenance, and security surface increase</div>
+            </div>
             <div class="detail-panel">
                 <div class="detail-content" id="detail-content">
                     <div class="detail-empty">Select a tier to explore.</div>
@@ -570,8 +595,12 @@
             {
                 tier: 0,
                 name: 'Atomic Primitives',
-                vectors: { effort: 'Writing only', data: 'None', interaction: 'Read and adapt' },
-                description: 'Documents, prompts, templates, and frameworks. Things you write once and reuse across engagements. No code\u2014just clear thinking, written well enough to work every time.',
+                vectors: {
+                    effort:      { score: 0, label: 'Writing only' },
+                    data:        { score: 0, label: 'None' },
+                    interaction: { score: 1, label: 'Read and adapt' }
+                },
+                description: 'Documents, prompts, templates, and frameworks. Things you write once and reuse across engagements. No code\u2014just clear thinking, written well enough to work every time. Lives in docs, Notion pages, shared drives, or email.',
                 buildReqs: 'Writing and clear thinking. No code, no hosting.',
                 examples: [
                     'Reusable prompts and prompt chains',
@@ -584,8 +613,12 @@
             {
                 tier: 1,
                 name: 'Enhanced Deliverables',
-                vectors: { effort: 'Light code', data: 'Embedded in the file', interaction: 'Open and explore' },
-                description: 'The same thinking you\u2019d put in a deck, but interactive, navigable, and self-contained. You\u2019re not building something new\u2014you\u2019re giving existing work a better container. Open the file and it works.',
+                vectors: {
+                    effort:      { score: 1, label: 'Light code' },
+                    data:        { score: 1, label: 'Embedded in the file' },
+                    interaction: { score: 2, label: 'Open and explore' }
+                },
+                description: 'The same thinking you\u2019d put in a deck, but interactive, navigable, and self-contained. You\u2019re not building something new\u2014you\u2019re giving existing work a better container. Open the file and it works. Delivered as HTML files, interactive PDFs, or embedded widgets.',
                 buildReqs: 'HTML/CSS/JS in a single file or small folder. No build system, no backend. Host it or just send the file.',
                 examples: [
                     'Interactive research reports with source navigation',
@@ -598,8 +631,12 @@
             {
                 tier: 2,
                 name: 'Standalone Tools',
-                vectors: { effort: 'Frontend + APIs', data: 'Passes through, nothing stored', interaction: 'Input, get output' },
-                description: 'Single-purpose utilities. Run it, get output, move on. No accounts, no saved data. The value compounds\u2014a tool you build for one engagement gets used in the next ten.',
+                vectors: {
+                    effort:      { score: 2, label: 'Frontend + APIs' },
+                    data:        { score: 1, label: 'Passes through, nothing stored' },
+                    interaction: { score: 2, label: 'Input, get output' }
+                },
+                description: 'Single-purpose utilities. Run it, get output, move on. No accounts, no saved data. The value compounds\u2014a tool you build for one engagement gets used in the next ten. Could be a web app, browser extension, Slack command, or CLI tool.',
                 buildReqs: 'Frontend code, possibly LLM API calls. No backend, no database. May need an API key at runtime.',
                 examples: [
                     'Prompt enhancer',
@@ -612,8 +649,12 @@
             {
                 tier: 3,
                 name: 'Guided Experiences',
-                vectors: { effort: 'App development', data: 'Session only — gone after', interaction: 'Follow a guided workflow' },
-                description: 'Multi-step workflows that walk someone through your methodology. It runs without you in the room\u2014the experience encodes your judgment, your sequencing, your POV on what matters.',
+                vectors: {
+                    effort:      { score: 3, label: 'App development' },
+                    data:        { score: 2, label: 'Session only \u2014 gone after' },
+                    interaction: { score: 3, label: 'Follow a guided workflow' }
+                },
+                description: 'Multi-step workflows that walk someone through your methodology. It runs without you in the room\u2014the experience encodes your judgment, your sequencing, your POV on what matters. Could be a web app, chatbot flow, or plugin wizard.',
                 buildReqs: 'Frontend framework, LLM integration, session state. No persistent backend\u2014state lives in memory or localStorage.',
                 examples: [
                     'Campaign brief coaching tool',
@@ -626,8 +667,12 @@
             {
                 tier: 4,
                 name: 'Collaborative Platforms',
-                vectors: { effort: 'Full-stack', data: 'Persistent — shared and growing', interaction: 'Collaborate in real-time' },
-                description: 'Multiple people, shared data, persistent state. Users log in, contribute, and build on each other\u2019s work over time. Real infrastructure, real maintenance\u2014build here when the value justifies it.',
+                vectors: {
+                    effort:      { score: 4, label: 'Full-stack' },
+                    data:        { score: 4, label: 'Persistent \u2014 shared and growing' },
+                    interaction: { score: 4, label: 'Collaborate in real-time' }
+                },
+                description: 'Multiple people, shared data, persistent state. Users log in, contribute, and build on each other\u2019s work over time. Real infrastructure, real maintenance\u2014build here when the value justifies it. Usually a web platform, but could be a Slack workspace with bots or a shared plugin.',
                 buildReqs: 'Backend (Firebase, Supabase, etc.), authentication, real-time sync, data modeling. Meaningfully more complex to build and maintain.',
                 examples: [
                     'Team voting and evaluation tools',
@@ -640,8 +685,12 @@
             {
                 tier: 5,
                 name: 'Automated Systems',
-                vectors: { effort: 'Infra + pipelines', data: 'Accumulating — becomes an asset', interaction: 'Runs unattended' },
-                description: 'Things that run without anyone pressing a button. They collect, process, and surface information on a schedule. Over time, they build proprietary datasets\u2014compounding information advantages that are hard to replicate.',
+                vectors: {
+                    effort:      { score: 5, label: 'Infra + pipelines' },
+                    data:        { score: 5, label: 'Accumulating \u2014 becomes an asset' },
+                    interaction: { score: 1, label: 'Runs unattended' }
+                },
+                description: 'Things that run without anyone pressing a button. They collect, process, and surface information on a schedule. Over time, they build proprietary datasets\u2014compounding information advantages that are hard to replicate. Runs as cron jobs, GitHub Actions, Zapier chains, or background scripts.',
                 buildReqs: 'Scripts, APIs, scheduled jobs, data pipelines. May or may not have a frontend\u2014some are entirely headless.',
                 examples: [
                     'Competitive intelligence collection',
@@ -712,6 +761,15 @@
         ]
     };
 
+    const TIER_COLORS = {
+        0: '#8B6F47',
+        1: '#4A5A7A',
+        2: '#3D6B52',
+        3: '#7A4568',
+        4: '#6B5B3E',
+        5: '#3E5C6B'
+    };
+
     const state = {
         currentView: 'stack',
         selectedTier: null,
@@ -758,10 +816,6 @@
                 state.selectedTier = state.selectedTier === tier.tier ? null : tier.tier;
                 renderTierList();
                 renderDetail();
-                // Position detail panel to align with selected tier
-                if (state.selectedTier !== null) {
-                    positionDetail(band);
-                }
             });
             band.addEventListener('keydown', (e) => { if (e.key === 'Enter') band.click(); });
 
@@ -769,16 +823,10 @@
         });
     }
 
-    function positionDetail(bandEl) {
-        const panel = document.getElementById('detail-content');
-        // On desktop, offset the sticky top to align with the clicked tier
-        if (window.innerWidth > 1023) {
-            const headerH = document.querySelector('.site-header').offsetHeight;
-            const bandRect = bandEl.getBoundingClientRect();
-            const desiredTop = Math.max(headerH + 16, bandRect.top + window.scrollY - document.querySelector('.detail-panel').getBoundingClientRect().top - window.scrollY + headerH);
-            // Use simple sticky top — the content just sticks near the header
-            panel.style.top = headerH + 16 + 'px';
-        }
+    function renderDots(score, max = 5) {
+        return Array.from({ length: max }, (_, i) =>
+            `<div class="detail-vector-dot${i < score ? ' filled' : ''}"></div>`
+        ).join('');
     }
 
     function renderDetail() {
@@ -789,20 +837,23 @@
         }
         const tier = DATA.tiers[state.selectedTier];
         panel.innerHTML = `
-            <div class="detail-tier-number">${tier.tier}</div>
+            <div class="detail-tier-number" style="color: ${TIER_COLORS[tier.tier]}">${tier.tier}</div>
             <h2 class="detail-name">${tier.name}</h2>
             <div class="detail-vectors">
                 <div class="detail-vector">
                     <div class="detail-vector-label">Effort</div>
-                    <div class="detail-vector-value">${tier.vectors.effort}</div>
+                    <div class="detail-vector-dots">${renderDots(tier.vectors.effort.score)}</div>
+                    <div class="detail-vector-value">${tier.vectors.effort.label}</div>
                 </div>
                 <div class="detail-vector">
                     <div class="detail-vector-label">Data</div>
-                    <div class="detail-vector-value">${tier.vectors.data}</div>
+                    <div class="detail-vector-dots">${renderDots(tier.vectors.data.score)}</div>
+                    <div class="detail-vector-value">${tier.vectors.data.label}</div>
                 </div>
                 <div class="detail-vector">
                     <div class="detail-vector-label">Interaction</div>
-                    <div class="detail-vector-value">${tier.vectors.interaction}</div>
+                    <div class="detail-vector-dots">${renderDots(tier.vectors.interaction.score)}</div>
+                    <div class="detail-vector-value">${tier.vectors.interaction.label}</div>
                 </div>
             </div>
             <p class="detail-description">${tier.description}</p>
